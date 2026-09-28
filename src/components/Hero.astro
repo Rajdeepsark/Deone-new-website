@@ -1,0 +1,57 @@
+---
+import Nav from "./Nav.astro";
+import MenuButton from "./MenuButton.astro";
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+}
+
+const {
+  eyebrow = "Crafted Global Banking",
+  headline = "Designed for life at\na higher standard",
+  imageSrc = "/hero.jpg",
+  imageAlt = "Aerial view of the ocean with a jet ski trail",
+} = Astro.props;
+---
+
+<section
+  class="relative isolate aspect-square min-h-[100svh] w-full overflow-hidden text-brand-cream"
+>
+  <img
+    src={imageSrc}
+    alt={imageAlt}
+    class="absolute inset-0 -z-10 h-full w-full object-cover object-[center_30%]"
+    fetchpriority="high"
+    decoding="async"
+  />
+
+  <div aria-hidden="true" class="absolute inset-0 -z-10 bg-scrim/[0.32]"></div>
+  <div
+    aria-hidden="true"
+    class="absolute inset-x-0 top-0 -z-10 h-[29%] bg-gradient-to-b from-scrim/20 to-transparent"
+  >
+  </div>
+
+  <Nav variant="light" />
+
+  <div class="absolute inset-x-0 top-[42svh] -translate-y-1/2 px-6 text-center">
+    <p
+      class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em] text-brand-cream"
+    >
+      {eyebrow}
+    </p>
+
+    <h1
+      class="mt-3 md:mt-4 mx-auto font-sans text-[36px] leading-[1.1] font-light uppercase tracking-[0.01em] md:text-[52px] lg:text-[64px] text-brand-cream"
+    >
+      {headline.split("\n").map((line) => (
+        <span class="block whitespace-nowrap">{line}</span>
+      ))}
+    </h1>
+  </div>
+
+  <MenuButton />
+</section>

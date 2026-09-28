@@ -1,0 +1,55 @@
+---
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  subtext?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  eyebrow = "The world of DeOne",
+  headline = "You Deserve Better",
+  subtext = "A members-only experience, made to do more for you.",
+  ctaLabel = "Enter the World",
+  ctaHref = "#",
+} = Astro.props;
+---
+
+<section class="relative isolate flex min-h-[900px] items-center justify-center bg-brand-cream overflow-hidden">
+  <img
+    src="/intro-pattern.svg"
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover object-center"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <div class="mx-auto flex w-full max-w-[856px] flex-col items-center px-6 text-center">
+    <p
+      class="font-serif text-[18px] font-medium uppercase tracking-[0.08em] text-brand-ink"
+    >
+      {eyebrow}
+    </p>
+
+    <h2
+      class="mt-4 font-sans text-[36px] leading-[1.15] font-normal uppercase tracking-[0.02em] text-brand-teal md:text-[42px]"
+    >
+      {headline}
+    </h2>
+
+    <p
+      class="mt-5 max-w-[560px] font-sans text-[16px] font-normal leading-[1.7] tracking-[0.01em] text-brand-ink md:text-[18px]"
+    >
+      {subtext}
+    </p>
+
+    <a
+      href={ctaHref}
+      class="mt-10 inline-flex h-11 items-center rounded-lg border border-cta-border px-6 font-sans text-[12px] font-medium uppercase tracking-[0.13em] text-brand-ink transition hover:bg-brand-ink/5"
+    >
+      {ctaLabel}
+    </a>
+  </div>
+</section>
