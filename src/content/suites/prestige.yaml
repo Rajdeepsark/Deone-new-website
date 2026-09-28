@@ -88,52 +88,63 @@ included:
   # Twelve cards, listed column by column: the first four are the left column,
   # the next four the middle, the last four the right.
   # `size` is `square` (328 x 328) or `tall` (328 x 431).
-  # PHOTOS PENDING: add an `image:` line to each card once the files are in public/suites.
   items:
     # Left column
     - label: |-
         Onchain Banking
         Account
       size: square
+      image: /suites/prestige-included-onchain-banking.jpg
       imageAlt: Man in a suit walking between dark glass towers
     - label: Prestige Card
       size: square
+      image: /suites/prestige-included-prestige-card.jpg
       imageAlt: Hands holding a brushed metal card
     - label: Shopping Rewards
       size: tall
+      image: /suites/prestige-included-shopping-rewards.jpg
       imageAlt: Couple carrying shopping bags along a palm-lined promenade
     - label: |-
         Price and Purchase
         Protection
       size: tall
+      image: /suites/prestige-included-purchase-protection.jpg
       imageAlt: Woman holding a metal card at a marble counter
 
     # Middle column
     - label: Cloud Miner
       size: tall
+      image: /suites/prestige-included-cloud-miner.jpg
       imageAlt: Man working on a laptop at a low table
     - label: Travel Accident Insurance
       size: square
+      image: /suites/prestige-included-travel-insurance.jpg
       imageAlt: Desert dunes at dusk
     - label: |-
         +1.700 Airport Lounges
         Worldwide
       size: tall
+      image: /suites/prestige-included-airport-lounges.jpg
       imageAlt: Couple talking over a drink in an airport lounge
     # This card's label ("Stablecoin Points Rewards System") is hidden in the design.
     - size: square
+      image: /suites/prestige-included-stablecoin-rewards.jpg
       imageAlt: Freediver above a coral reef
 
     # Right column
     - label: Rewards Hub
       size: square
+      image: /suites/prestige-included-rewards-hub.jpg
       imageAlt: Hand wearing a sculptural gold ring, resting on white fabric
     - label: Wellness
       size: square
+      image: /suites/prestige-included-wellness.jpg
       imageAlt: Woman relaxing in a spa pool
     - label: Better Life Rewards™
       size: tall
+      image: /suites/prestige-included-better-life-rewards.jpg
       imageAlt: Hands holding a phone showing the rewards app
     - label: Cold Storage Vault
       size: tall
+      image: /suites/prestige-included-cold-storage-vault.jpg
       imageAlt: Man holding a metal card and a phone beside a vault device
