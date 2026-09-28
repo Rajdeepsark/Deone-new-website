@@ -19,12 +19,9 @@ const { eyebrow, headline, subtext, items } = Astro.props;
 const perColumn = Math.ceil(items.length / 3);
 const columns = [0, 1, 2].map((i) => items.slice(i * perColumn, (i + 1) * perColumn));
 
-// On wide screens the rounded corners mirror around the middle column.
-const corners = [
-  "rounded-tr-[24px]",
-  "rounded-tr-[24px] lg:rounded-t-[24px]",
-  "rounded-tr-[24px] lg:rounded-tl-[24px] lg:rounded-tr-none",
-];
+// The rounded corners mirror around the middle column. The exported pictures have
+// the same corners cut into them, so each card keeps its corners at every width.
+const corners = ["rounded-tr-[24px]", "rounded-t-[24px]", "rounded-tl-[24px]"];
 ---
 
 <section class="bg-blush-light px-6 py-24 text-brand-ink md:py-[160px]">
@@ -74,7 +71,12 @@ const corners = [
             )}
 
             {card.label && (
-              <p class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent to-black/40 px-6 pb-6 pt-8 font-sans text-[16px] font-medium leading-[1.7] tracking-[0.01em] text-brand-sand">
+              <p
+                class:list={[
+                  "absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent px-6 pb-6 pt-8 font-sans text-[16px] font-medium leading-[1.7] tracking-[0.01em] text-brand-sand",
+                  card.size === "tall" ? "to-black/30" : "to-black/40",
+                ]}
+              >
                 {card.label.split("\n").map((line) => (
                   <span class="block">{line}</span>
                 ))}
