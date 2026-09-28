@@ -148,3 +148,44 @@ included:
       size: tall
       image: /suites/prestige-included-cold-storage-vault.jpg
       imageAlt: Man holding a metal card and a phone beside a vault device
+
+details:
+  headline: Full benefits
+  subtext: Explore the banking, travel, wellbeing, rewards and protection included in Prestige.
+
+  # Shown three to a row. `icon` is one of: card, coin, connect, travel, wellness, diamond.
+  groups:
+    - title: Products
+      icon: card
+      items:
+        - Metal tokenized card
+        - Cold storage Vault
+    - title: Banking
+      icon: coin
+      items:
+        - Onchain banking account
+        - Zero FX Fees
+        - Price and purchase protection
+        - Local currency reserves
+    - title: Connectivity
+      icon: connect
+      items:
+        - Cloud miner
+        - eSIM 10 GB
+    - title: Travel
+      icon: travel
+      items:
+        - +1.700 airport lounges worldwide
+        - Travel accident insurance
+        - Baggage delay
+        - Lost luggage
+    - title: Wellness
+      icon: wellness
+      items:
+        - Wellness benefits access
+        - Wellness point system
+    - title: Rewards
+      icon: diamond
+      items:
+        - Rewards hub
+        - Shopping rewards

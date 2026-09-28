@@ -64,6 +64,17 @@ const suites = defineCollection({
         }),
       ),
     }),
+    details: z.object({
+      headline: z.string(),
+      subtext: z.string(),
+      groups: z.array(
+        z.object({
+          title: z.string(),
+          icon: z.enum(["card", "coin", "connect", "travel", "wellness", "diamond"]),
+          items: z.array(z.string()),
+        }),
+      ),
+    }),
   }),
 });
 
