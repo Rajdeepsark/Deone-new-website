@@ -80,6 +80,49 @@ quote:
   image: /suites/prestige-quote.jpg
   imageAlt: Man in a linen suit watching a street race from a balcony above the harbour at sunset
 
+security:
+  eyebrow: Security
+  headline: For what you’re building
+  subtext: A more considered way to spend, with lasting protection for what you hold.
+
+  # One tab per product. Each has a picture and a list of features.
+  # `icon` is any name from src/icons.ts, e.g. shield, plane, percent, wallet, card, lock.
+  # `imagePlacement` is where the picture sits in the 1512px design frame, in px.
+  tabs:
+    - label: Prestige Card
+      # STAND-IN PICTURE: cut from the design screenshot, so it is soft.
+      # Replace with the real card render (transparent PNG, 2x).
+      image: /suites/prestige-security-card.png
+      imageAlt: Brushed metal DeOne Prestige card standing on one corner
+      imagePlacement: { left: 811, top: 562, width: 687.56 }
+      features:
+        - icon: shield
+          title: Security, kept close
+          description: Solid metal, with no printed numbers or markings. Your card details stay out of sight.
+        - icon: plane
+          title: More room to act
+          description: Higher spending limits and worldwide acceptance, for plans that reach beyond borders.
+        # PLACEHOLDER TEXT: this box is cut off in the design.
+        - icon: percent
+          title: Title to come
+          description: Description to come.
+
+    - label: The Vault
+      # PICTURE PENDING: add `image: /suites/<file>` once the Vault render
+      # (transparent PNG, 2x) is in public/suites.
+      imageAlt: The Vault, a bronze metal card engraved with a shield of concentric lines
+      imagePlacement: { left: 764, top: 666, width: 780 }
+      features:
+        - icon: wallet
+          title: Yours, always
+          description: Your assets remain yours. Your Vault Key stays in your hands.
+        - icon: card
+          title: Built for a lifetime
+          description: Reinforced construction, made to protect your assets for the long term.
+        - icon: lock
+          title: A quieter kind of security
+          description: No battery, ports or moving parts. A single tap brings your Vault within reach.
+
 included:
   eyebrow: What's included
   headline: Prestige, in full

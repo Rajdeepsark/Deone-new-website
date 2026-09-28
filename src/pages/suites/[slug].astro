@@ -5,6 +5,7 @@ import SuiteHero from "../../components/SuiteHero.astro";
 import SuitePictures from "../../components/SuitePictures.astro";
 import SuiteBenefits from "../../components/SuiteBenefits.astro";
 import SuiteQuote from "../../components/SuiteQuote.astro";
+import SuiteSecurity from "../../components/SuiteSecurity.astro";
 import SuiteIncluded from "../../components/SuiteIncluded.astro";
 import SuiteDetails from "../../components/SuiteDetails.astro";
 
@@ -17,7 +18,8 @@ export async function getStaticPaths() {
 }
 
 const { suite } = Astro.props;
-const { name, description, hero, pictures, benefits, quote, included, details } = suite.data;
+const { name, description, hero, pictures, benefits, quote, security, included, details } =
+  suite.data;
 ---
 
 <Base title={`DeOne — ${name} Suite`} description={description}>
@@ -39,6 +41,12 @@ const { name, description, hero, pictures, benefits, quote, included, details } 
     items={benefits.items}
   />
   <SuiteQuote text={quote.text} image={quote.image} imageAlt={quote.imageAlt} />
+  <SuiteSecurity
+    eyebrow={security.eyebrow}
+    headline={security.headline}
+    subtext={security.subtext}
+    tabs={security.tabs}
+  />
   <SuiteIncluded
     eyebrow={included.eyebrow}
     headline={included.headline}

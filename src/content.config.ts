@@ -1,5 +1,6 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
+import { iconNames } from "./icons";
 
 const suites = defineCollection({
   loader: glob({ pattern: "*.yaml", base: "./src/content/suites" }),
@@ -51,6 +52,33 @@ const suites = defineCollection({
       image: z.string().optional(),
       imageAlt: z.string().default(""),
     }),
+    security: z.object({
+      eyebrow: z.string(),
+      headline: z.string(),
+      subtext: z.string(),
+      tabs: z
+        .array(
+          z.object({
+            label: z.string(),
+            image: z.string().optional(),
+            imageAlt: z.string().default(""),
+            // Where the picture sits in the 1512px design frame, in px.
+            imagePlacement: z
+              .object({ left: z.number(), top: z.number(), width: z.number() })
+              .optional(),
+            features: z
+              .array(
+                z.object({
+                  icon: z.enum(iconNames),
+                  title: z.string(),
+                  description: z.string(),
+                }),
+              )
+              .min(1),
+          }),
+        )
+        .min(1),
+    }),
     included: z.object({
       eyebrow: z.string(),
       headline: z.string(),
@@ -70,7 +98,7 @@ const suites = defineCollection({
       groups: z.array(
         z.object({
           title: z.string(),
-          icon: z.enum(["card", "coin", "connect", "travel", "wellness", "diamond"]),
+          icon: z.enum(iconNames),
           items: z.array(z.string()),
         }),
       ),
