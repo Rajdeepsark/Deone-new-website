@@ -22,12 +22,17 @@ interface Props {
 
 const { headline, subtext, gallery, slides } = Astro.props;
 
-// Where each gallery picture floats around the headline, in gallery order.
+// Each gallery picture, in gallery order: where it floats around the headline, and how
+// it behaves while scrolling. All values are px at the design width.
+//   blur  - softness at rest, as in the design
+//   soft  - softness when fully out of focus
+//   rise  - how far it travels upward, ahead of the page, while scrolling down
+// The closer a picture appears, the more it softens and the further it rises.
 const slots = [
-  "left-0 top-[14.9%] w-[15%] blur-[4px] md:w-[10.4%]",
-  "right-0 top-0 w-[24%] md:w-[17.76%]",
-  "left-0 bottom-0 w-[36%] md:w-[28.04%]",
-  "right-0 top-[58.6%] w-[15%] blur-[4px] md:w-[10.4%]",
+  { position: "left-0 top-[14.9%] w-[15%] md:w-[10.4%]", blur: 4, soft: 10, rise: 70 },
+  { position: "right-0 top-0 w-[24%] md:w-[17.76%]", blur: 0, soft: 12, rise: 110 },
+  { position: "left-0 bottom-0 w-[36%] md:w-[28.04%]", blur: 0, soft: 14, rise: 150 },
+  { position: "right-0 top-[58.6%] w-[15%] md:w-[10.4%]", blur: 4, soft: 10, rise: 90 },
 ];
 ---
 
@@ -35,17 +40,25 @@ const slots = [
   class="bg-gradient-to-b from-blush-light to-blush pb-24 pt-24 text-brand-ink md:pb-[240px] md:pt-[155px]"
 >
   <div class="px-6">
-    <div class="@container relative mx-auto aspect-[856/894] w-full max-w-[856px]">
+    <div
+      class="@container relative mx-auto aspect-[856/894] w-full max-w-[856px]"
+      data-gallery
+    >
       {gallery.slice(0, slots.length).map((picture, i) => (
         <img
           src={picture.image}
           alt={picture.alt}
           class:list={[
-            "absolute aspect-[240/313] rounded-tr-[12px] object-cover md:rounded-tr-[24px]",
-            slots[i],
+            "absolute aspect-[240/313] rounded-tr-[12px] object-cover will-change-[filter,translate] [filter:blur(var(--blur))] [transition:translate_450ms_cubic-bezier(0.2,0.8,0.2,1),filter_450ms_cubic-bezier(0.2,0.8,0.2,1)] [translate:0_var(--shift,0px)] motion-reduce:transition-none md:rounded-tr-[24px]",
+            slots[i].position,
           ]}
+          style={`--blur:${slots[i].blur}px`}
           loading="lazy"
           decoding="async"
+          data-float
+          data-blur={slots[i].blur}
+          data-soft={slots[i].soft}
+          data-rise={slots[i].rise}
         />
       ))}
 
@@ -71,3 +84,46 @@ const slots = [
     <SuiteSlider slides={slides} />
   </div>
 </section>
+
+<script>
+  // Depth of field while scrolling. With the gallery in the middle of the screen the
+  // pictures sit exactly as designed. Scrolling down, all of them rise ahead of the page
+  // and fall out of focus; scrolling back up, they sink and sharpen again.
+  const FOCUS_FROM = 0.08; // share of the gallery's travel that stays fully in focus
+  const FOCUS_TO = 0.6; // share at which the pictures are fully out of focus
+  const DESIGN_WIDTH = 856;
+
+  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
+
+  document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((gallery) => {
+    const pictures = [...gallery.querySelectorAll<HTMLElement>("[data-float]")];
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const update = () => {
+      const view = window.innerHeight;
+      const box = gallery.getBoundingClientRect();
+      if (box.bottom < -view || box.top > view * 2) return;
+
+      // 1 as the gallery enters at the bottom of the screen, 0 when centred, -1 as it leaves.
+      const travel = reduced.matches
+        ? 0
+        : clamp((box.top + box.height / 2 - view / 2) / ((view + box.height) / 2), -1, 1);
+      const defocus = clamp((Math.abs(travel) - FOCUS_FROM) / (FOCUS_TO - FOCUS_FROM), 0, 1);
+      const scale = box.width / DESIGN_WIDTH;
+
+      for (const picture of pictures) {
+        const rest = Number(picture.dataset.blur);
+        const blur = rest + defocus * (Number(picture.dataset.soft) - rest);
+        const shift = travel * Number(picture.dataset.rise) * scale;
+
+        picture.style.setProperty("--blur", `${blur.toFixed(1)}px`);
+        picture.style.setProperty("--shift", `${shift.toFixed(1)}px`);
+      }
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    reduced.addEventListener("change", update);
+    update();
+  });
+</script>
