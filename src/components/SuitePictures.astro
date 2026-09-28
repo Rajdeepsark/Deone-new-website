@@ -1,0 +1,73 @@
+---
+import SuiteSlider from "./SuiteSlider.astro";
+
+interface Picture {
+  image: string;
+  alt: string;
+}
+
+interface Slide {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}
+
+interface Props {
+  headline: string;
+  subtext: string;
+  gallery: Picture[];
+  slides: Slide[];
+}
+
+const { headline, subtext, gallery, slides } = Astro.props;
+
+// Where each gallery picture floats around the headline, in gallery order.
+const slots = [
+  "left-0 top-[14.9%] w-[15%] blur-[4px] md:w-[10.4%]",
+  "right-0 top-0 w-[24%] md:w-[17.76%]",
+  "left-0 bottom-0 w-[36%] md:w-[28.04%]",
+  "right-0 top-[58.6%] w-[15%] blur-[4px] md:w-[10.4%]",
+];
+---
+
+<section
+  class="bg-gradient-to-b from-blush-light to-blush pb-24 pt-24 text-brand-ink md:pb-[240px] md:pt-[155px]"
+>
+  <div class="px-6">
+    <div class="@container relative mx-auto aspect-[856/894] w-full max-w-[856px]">
+      {gallery.slice(0, slots.length).map((picture, i) => (
+        <img
+          src={picture.image}
+          alt={picture.alt}
+          class:list={[
+            "absolute aspect-[240/313] rounded-tr-[12px] object-cover md:rounded-tr-[24px]",
+            slots[i],
+          ]}
+          loading="lazy"
+          decoding="async"
+        />
+      ))}
+
+      <h2
+        class="absolute inset-x-0 top-[22.93%] text-center font-sans text-[clamp(32px,7.48cqw,64px)] leading-[1.094] font-light uppercase tracking-[0.01em]"
+      >
+        {headline.split("\n").map((line) => (
+          <span class="block whitespace-nowrap">{line}</span>
+        ))}
+      </h2>
+    </div>
+
+    <p
+      class="mx-auto mt-24 max-w-[856px] text-center font-sans text-[18px] leading-[1.2] font-normal uppercase tracking-[0.03em] md:mt-[191px] md:text-[24px]"
+    >
+      {subtext.split("\n").map((line) => (
+        <span class="block">{line}</span>
+      ))}
+    </p>
+  </div>
+
+  <div class="mt-32 md:mt-[240px] lg:mt-[400px]">
+    <SuiteSlider slides={slides} />
+  </div>
+</section>

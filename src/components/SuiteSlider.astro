@@ -1,0 +1,194 @@
+---
+interface Slide {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}
+
+interface Props {
+  slides: Slide[];
+  label?: string;
+}
+
+const { slides, label = "Suite highlights" } = Astro.props;
+
+const toRoman = (n: number) => {
+  const numerals: [number, string][] = [
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"],
+  ];
+  let out = "";
+  for (const [value, symbol] of numerals) {
+    while (n >= value) {
+      out += symbol;
+      n -= value;
+    }
+  }
+  return out;
+};
+
+const hasNext = slides.length > 1;
+---
+
+<div
+  class="@container overflow-hidden"
+  role="group"
+  aria-roledescription="carousel"
+  aria-label={label}
+  data-slider
+>
+  <div class="flex flex-col text-brand-ink lg:flex-row lg:items-end">
+    <div
+      class="relative aspect-[744/900] w-[calc(100cqw-24px)] flex-none overflow-hidden rounded-tr-[24px] lg:aspect-auto lg:h-[min(59.52cqw,900px)] lg:w-[49.2cqw]"
+    >
+      {slides.map((slide, i) => (
+        <img
+          src={slide.image}
+          alt={slide.imageAlt}
+          class="invisible absolute inset-0 h-full w-full object-cover data-[active]:visible"
+          loading="lazy"
+          decoding="async"
+          data-slide-image
+          data-active={i === 0 ? "" : undefined}
+        />
+      ))}
+    </div>
+
+    <div class="flex-none px-6 pt-10 lg:w-[34.92cqw] lg:self-start lg:px-0 lg:pl-[5.82cqw] lg:pt-[12.57cqw]">
+      <div class="grid overflow-hidden">
+        {slides.map((slide, i) => (
+          <div
+            class="invisible col-start-1 row-start-1 data-[active]:visible"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${slides.length}`}
+            inert={i !== 0}
+            data-slide-text
+            data-active={i === 0 ? "" : undefined}
+          >
+            <p class="font-serif text-[18px] font-medium uppercase tracking-[0.08em]">
+              {toRoman(i + 1)}
+            </p>
+
+            <h3 class="mt-1.5 font-sans text-[28px] leading-[1.2] font-normal uppercase tracking-[0.04em] lg:text-[32px]">
+              {slide.title}
+            </h3>
+
+            <p class="mt-6 font-sans text-[16px] font-normal leading-[1.7] tracking-[0.01em]">
+              {slide.description}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {hasNext && (
+        <button
+          type="button"
+          class="group/next mt-12 flex items-center gap-4 outline-none lg:mt-[67px]"
+          data-slide-next
+        >
+          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-ink/20 transition group-hover/next:bg-brand-ink/5 group-focus-visible/next:border-brand-ink">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <path d="M0.5 5.5H6M8.5 5.5H16M11 0.5L16 5.5L11 10.5" stroke="currentColor" stroke-width="1" />
+            </svg>
+          </span>
+          <span class="font-sans text-[12px] font-medium uppercase tracking-[0.13em]">
+            Next
+          </span>
+        </button>
+      )}
+
+      <p class="sr-only" aria-live="polite" data-slider-status></p>
+    </div>
+
+    {hasNext && (
+      <div
+        class="relative hidden h-[min(28.17cqw,426px)] w-[23.28cqw] flex-none overflow-hidden lg:block"
+        aria-hidden="true"
+      >
+        {slides.map((slide, i) => (
+          <img
+            src={slide.image}
+            alt=""
+            class="invisible absolute inset-0 h-full w-full object-cover object-left data-[active]:visible"
+            loading="lazy"
+            decoding="async"
+            data-slide-preview
+            data-active={i === 1 ? "" : undefined}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+<script>
+  // Which way the pictures and text travel when moving to the next slide:
+  // -1 is right to left, 1 is left to right.
+  const DIRECTION: number = -1;
+
+  const DURATION = 900;
+  const EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
+
+  type Motion = { enter: Keyframe[]; leave: Keyframe[] };
+
+  // Everything travels the full width of its own frame, which clips it.
+  const slide: Motion = {
+    enter: [{ transform: `translateX(${-100 * DIRECTION}%)` }, { transform: "translateX(0)" }],
+    leave: [{ transform: "translateX(0)" }, { transform: `translateX(${100 * DIRECTION}%)` }],
+  };
+
+  const swap = async (leaving: HTMLElement, entering: HTMLElement, motion: Motion) => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = reduced ? 0 : DURATION;
+
+    entering.toggleAttribute("data-active", true);
+    entering.animate(motion.enter, { duration, easing: EASING });
+    const exit = leaving.animate(motion.leave, { duration, easing: EASING });
+
+    // `finished` stalls while the browser isn't painting, so a timer backs it up.
+    await Promise.race([
+      exit.finished,
+      new Promise((resolve) => setTimeout(resolve, duration + 50)),
+    ]);
+    leaving.removeAttribute("data-active");
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-slider]").forEach((slider) => {
+    const images = [...slider.querySelectorAll<HTMLElement>("[data-slide-image]")];
+    const previews = [...slider.querySelectorAll<HTMLElement>("[data-slide-preview]")];
+    const texts = [...slider.querySelectorAll<HTMLElement>("[data-slide-text]")];
+    const status = slider.querySelector<HTMLElement>("[data-slider-status]");
+    const count = images.length;
+    const after = (index: number) => (index + 1) % count;
+
+    let active = 0;
+    let sliding = false;
+
+    slider.querySelector("[data-slide-next]")?.addEventListener("click", async () => {
+      if (sliding) return;
+      sliding = true;
+
+      const previous = active;
+      active = after(active);
+
+      texts.forEach((text, i) => (text.inert = i !== active));
+      if (status) {
+        const title = texts[active].querySelector("h3")?.textContent?.trim();
+        status.textContent = `Slide ${active + 1} of ${count}: ${title}`;
+      }
+
+      // The small frame always shows the picture that comes after the big one.
+      await Promise.all([
+        swap(images[previous], images[active], slide),
+        swap(previews[after(previous)], previews[after(active)], slide),
+        swap(texts[previous], texts[active], slide),
+      ]);
+      sliding = false;
+    });
+  });
+</script>

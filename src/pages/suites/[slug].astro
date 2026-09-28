@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import SuiteHero from "../../components/SuiteHero.astro";
+import SuitePictures from "../../components/SuitePictures.astro";
+import SuiteBenefits from "../../components/SuiteBenefits.astro";
+import SuiteQuote from "../../components/SuiteQuote.astro";
+import SuiteIncluded from "../../components/SuiteIncluded.astro";
+
+export async function getStaticPaths() {
+  const suites = await getCollection("suites");
+  return suites.map((suite) => ({
+    params: { slug: suite.id },
+    props: { suite },
+  }));
+}
+
+const { suite } = Astro.props;
+const { name, description, hero, pictures, benefits, quote, included } = suite.data;
+---
+
+<Base title={`DeOne — ${name} Suite`} description={description}>
+  <SuiteHero
+    eyebrow={hero.eyebrow}
+    name={name}
+    imageSrc={hero.image}
+    imageAlt={hero.imageAlt}
+  />
+  <SuitePictures
+    headline={pictures.headline}
+    subtext={pictures.subtext}
+    gallery={pictures.gallery}
+    slides={pictures.slides}
+  />
+  <SuiteBenefits
+    eyebrow={benefits.eyebrow}
+    headline={benefits.headline}
+    items={benefits.items}
+  />
+  <SuiteQuote text={quote.text} image={quote.image} imageAlt={quote.imageAlt} />
+  <SuiteIncluded
+    eyebrow={included.eyebrow}
+    headline={included.headline}
+    subtext={included.subtext}
+    items={included.items}
+  />
+</Base>
