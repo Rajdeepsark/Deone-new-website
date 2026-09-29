@@ -1,0 +1,61 @@
+---
+interface Props {
+  eyebrow?: string;
+  name: string;
+  ctaLabel?: string;
+  href?: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+const {
+  eyebrow = "Suite",
+  name,
+  ctaLabel = "Discover",
+  href = "#",
+  image,
+  imageAlt = "",
+} = Astro.props;
+---
+
+<!--
+  The words sit in the middle at every width. Wide screens show the whole picture, as
+  designed. Narrower screens can't, so there the picture sits in the lower part and fades
+  at the top into the colour of its wall, which keeps the family clear of the words.
+-->
+<section
+  class="relative isolate flex aspect-[10/13] min-h-[440px] w-full items-center justify-center overflow-hidden bg-[#3a2d22] px-6 text-brand-cream sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[1512/450] lg:min-h-[360px] lg:bg-brand-teal-night"
+>
+  {image && (
+    <img
+      src={image}
+      alt={imageAlt}
+      class="absolute inset-x-0 bottom-0 -z-10 h-[62%] w-full object-cover object-[80%_center] [mask-image:linear-gradient(to_bottom,transparent,#000_40%)] sm:object-[88%_center] lg:top-0 lg:h-full lg:object-center lg:[mask-image:none]"
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+
+  <div class="flex flex-col items-center text-center">
+    <p
+      class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em]"
+    >
+      {eyebrow}
+    </p>
+
+    <h2
+      class="mt-3 font-sans text-[clamp(32px,10.5vw,40px)] leading-[1.1] font-light uppercase tracking-[0.05em] md:text-[52px] md:tracking-[0.02em] xl:text-[64px]"
+    >
+      {name}
+    </h2>
+
+    <!-- The link covers the whole banner, so all of it can be pressed. -->
+    <a
+      href={href}
+      class="mt-5 border-b border-brand-cream/40 pb-1 font-sans text-[12px] font-medium uppercase leading-[15px] tracking-[0.13em] outline-none transition after:absolute after:inset-0 hover:border-brand-cream focus-visible:border-brand-cream"
+    >
+      {ctaLabel}
+      <span class="sr-only"> the {name} suite</span>
+    </a>
+  </div>
+</section>

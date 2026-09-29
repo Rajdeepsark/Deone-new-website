@@ -115,6 +115,17 @@ const suites = defineCollection({
         }),
       ),
     }),
+    // The closing banner that leads on to another suite.
+    next: z
+      .object({
+        eyebrow: z.string().default("Suite"),
+        name: z.string(),
+        ctaLabel: z.string().default("Discover"),
+        href: z.string().default("#"),
+        image: z.string().optional(),
+        imageAlt: z.string().default(""),
+      })
+      .optional(),
   }),
 });
 

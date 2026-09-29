@@ -8,6 +8,7 @@ import SuiteQuote from "../../components/SuiteQuote.astro";
 import SuiteSecurity from "../../components/SuiteSecurity.astro";
 import SuiteIncluded from "../../components/SuiteIncluded.astro";
 import SuiteDetails from "../../components/SuiteDetails.astro";
+import SuiteNext from "../../components/SuiteNext.astro";
 
 export async function getStaticPaths() {
   const suites = await getCollection("suites");
@@ -28,6 +29,7 @@ const {
   security,
   included,
   details,
+  next,
 } = suite.data;
 ---
 
@@ -64,4 +66,14 @@ const {
     phone={included.phone}
   />
   <SuiteDetails headline={details.headline} subtext={details.subtext} groups={details.groups} />
+  {next && (
+    <SuiteNext
+      eyebrow={next.eyebrow}
+      name={next.name}
+      ctaLabel={next.ctaLabel}
+      href={next.href}
+      image={next.image}
+      imageAlt={next.imageAlt}
+    />
+  )}
 </Base>

@@ -252,3 +252,11 @@ details:
       items:
         - Rewards hub
         - Shopping rewards
+
+# The banner that closes the page and leads on to another suite.
+# `href` is where it goes; it defaults to "#" until that suite's page exists.
+next:
+  eyebrow: Suite
+  name: Executive
+  image: /suites/executive-preview.jpg
+  imageAlt: Family talking on a sofa on a terrace at dusk
