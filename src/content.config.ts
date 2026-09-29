@@ -72,6 +72,8 @@ const suites = defineCollection({
                   icon: z.enum(iconNames),
                   title: z.string(),
                   description: z.string(),
+                  // The picture to show while this feature is in focus.
+                  image: z.string().optional(),
                 }),
               )
               .min(1),

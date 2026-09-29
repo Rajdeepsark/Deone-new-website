@@ -86,8 +86,12 @@ security:
   subtext: A more considered way to spend, with lasting protection for what you hold.
 
   # One tab per product. Each has a picture and a list of features.
+  # On wide screens the section scrolls through the features of the tab in view, one by
+  # one. Tabs change only when chosen.
   # `icon` is any name from src/icons.ts, e.g. shield, plane, percent, wallet, card, lock.
   # `imagePlacement` is where the picture sits in the 1512px design frame, in px.
+  # A feature can have its own `image:`, shown while that feature is in focus. Without
+  # one, the tab's picture is used and simply changes pose from feature to feature.
   tabs:
     - label: Prestige Card
       # STAND-IN PICTURE: cut from the design screenshot, so it is soft.

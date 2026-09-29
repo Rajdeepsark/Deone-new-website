@@ -6,6 +6,7 @@ interface Feature {
   icon: IconName;
   title: string;
   description: string;
+  image?: string;
 }
 
 interface Placement {
@@ -43,11 +44,24 @@ const place = ({ left, top, width }: Placement = DEFAULT_PLACEMENT) =>
     `--w:${((width / PANEL.width) * 100).toFixed(2)}%`,
   ].join(";");
 
+// One picture per feature when the features bring their own, otherwise the tab's single
+// picture, which then changes pose from feature to feature.
+const pictures = (tab: Tab) =>
+  tab.features.some((feature) => feature.image)
+    ? tab.features.map((feature) => feature.image ?? tab.image).filter(Boolean)
+    : tab.image
+      ? [tab.image]
+      : [];
+
+// On wide screens the section scrolls through the features of the tab in view, one step
+// each. The longest list decides how far the page scrolls.
+const steps = Math.max(...tabs.map((tab) => tab.features.length));
+
 const id = (kind: string, index: number) => `security-${kind}-${index}`;
 ---
 
 <section
-  class="relative isolate overflow-hidden bg-gradient-to-b from-blush-light to-[#f9e5db] px-6 py-24 text-brand-ink md:py-[160px]"
+  class="relative isolate overflow-x-clip bg-gradient-to-b from-blush-light to-[#f9e5db] px-6 py-24 text-brand-ink md:py-[160px]"
   data-security
 >
   <header class="mx-auto max-w-[600px] text-center">
@@ -70,96 +84,151 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
     </p>
   </header>
 
-  <div class="mx-auto mt-16 flex max-w-[1032px] flex-col items-center lg:mt-[120px]">
+  <!--
+    On wide screens this block is taller than what it holds. The extra height is the
+    distance the page scrolls while the stage inside stays pinned, one stretch per step.
+  -->
+  <div
+    class="mt-16 lg:mt-[120px] lg:h-[calc(830px_+_var(--steps)_*_var(--stretch))] lg:[--stretch:50svh]"
+    style={`--steps:${steps}`}
+    data-scroller
+  >
     <div
-      class="flex w-full max-w-[418px] gap-1 rounded-lg bg-brand-sand p-1 ring-1 ring-inset ring-brand-ink/[0.04]"
-      role="tablist"
-      aria-label={headline}
+      class="mx-auto flex max-w-[1032px] flex-col items-center lg:sticky lg:top-[max(16px,calc((100svh_-_830px)_/_2))] lg:origin-top lg:scale-[var(--fit,1)]"
+      data-stage
     >
+      <div
+        class="flex w-full max-w-[418px] gap-1 rounded-lg bg-brand-sand p-1 ring-1 ring-inset ring-brand-ink/[0.04]"
+        role="tablist"
+        aria-label={headline}
+      >
+        {tabs.map((tab, i) => (
+          <button
+            type="button"
+            class="h-11 flex-1 whitespace-nowrap rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-brand-copper aria-selected:text-brand-sand"
+            role="tab"
+            id={id("tab", i)}
+            aria-controls={id("panel", i)}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {tabs.map((tab, i) => (
-        <button
-          type="button"
-          class="h-11 flex-1 rounded-lg px-6 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-brand-copper aria-selected:text-brand-sand"
-          role="tab"
-          id={id("tab", i)}
-          aria-controls={id("panel", i)}
-          aria-selected={i === 0 ? "true" : "false"}
-          tabindex={i === 0 ? 0 : -1}
+        <div
+          class="relative mt-16 w-full"
+          role="tabpanel"
+          id={id("panel", i)}
+          aria-labelledby={id("tab", i)}
+          hidden={i !== 0}
         >
-          {tab.label}
-        </button>
+          {pictures(tab).length > 0 && (
+            <div
+              class="group/picture pointer-events-none relative mx-auto -mt-8 mb-2 w-[78%] max-w-[420px] select-none transition-[opacity,translate] duration-300 ease-out motion-reduce:transition-none lg:absolute lg:left-[calc(var(--x)_-_3%)] lg:top-[var(--y)] lg:-z-10 lg:m-0 lg:w-[calc(var(--w)_*_0.84)] lg:max-w-none lg:translate-y-[calc((1_-_var(--reveal,1))_*_72px)] lg:opacity-[var(--reveal,1)] xl:left-[var(--x)] xl:w-[var(--w)]"
+              style={place(tab.imagePlacement)}
+              data-picture
+              data-state="0"
+            >
+              {pictures(tab).length > 1 ? (
+                pictures(tab).map((src, n) => (
+                  <img
+                    src={src}
+                    alt={n === 0 ? tab.imageAlt : ""}
+                    class:list={[
+                      "w-full opacity-0 transition-opacity duration-[700ms] ease-[cubic-bezier(0.65,0,0.35,1)] data-[active]:opacity-100 motion-reduce:transition-none",
+                      n > 0 && "absolute inset-0 h-full object-contain",
+                    ]}
+                    loading="lazy"
+                    decoding="async"
+                    data-layer
+                    data-active={n === 0 ? "" : undefined}
+                  />
+                ))
+              ) : (
+                <img
+                  src={pictures(tab)[0]}
+                  alt={tab.imageAlt}
+                  class="w-full transition-transform duration-[800ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-data-[state=1]/picture:-translate-y-[3%] group-data-[state=1]/picture:scale-[1.04] group-data-[state=1]/picture:-rotate-[6deg] group-data-[state=2]/picture:-translate-y-[2%] group-data-[state=2]/picture:scale-[0.97] group-data-[state=2]/picture:rotate-[5deg] motion-reduce:transition-none"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+            </div>
+          )}
+
+          <div
+            class="mx-auto max-w-[504px] transition-opacity duration-300 ease-out motion-reduce:transition-none lg:relative lg:mx-0 lg:h-[714px] lg:w-[504px] lg:max-w-none lg:overflow-hidden lg:opacity-[var(--reveal,1)] lg:[mask-image:linear-gradient(180deg,transparent_0,#000_33.61%,#000_55.88%,transparent_100%)]"
+          >
+            <!-- On wide screens every box gets a 198px row, so the list moves in even steps. -->
+            <ol
+              class="flex flex-col gap-6 transition-transform duration-[600ms] ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none lg:absolute lg:inset-x-0 lg:top-[200px] lg:grid lg:auto-rows-[198px] lg:items-start lg:-translate-y-[var(--offset,0px)]"
+              data-track
+            >
+              {tab.features.map((feature, n) => (
+                <li
+                  class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-brand-cream p-6 ring-1 ring-inset ring-brand-copper/40 transition-[background-color,box-shadow] duration-[600ms] lg:bg-brand-cream/80 lg:ring-transparent lg:data-[active]:bg-brand-cream lg:data-[active]:ring-brand-copper/40"
+                  data-feature
+                  data-active={n === 0 ? "" : undefined}
+                >
+                  <span
+                    class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 bg-[linear-gradient(174.31deg,#C57847_39.64%,#F3E4DA_208.39%)] text-brand-sand transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
+                  >
+                    <Icon name={feature.icon} stroke={1.4} />
+                  </span>
+
+                  <div class="flex flex-col gap-4 transition-opacity duration-[600ms] lg:opacity-50 lg:group-data-[active]/feature:opacity-100">
+                    <h3 class="font-sans text-[16px] leading-[22px] font-medium uppercase tracking-[0.03em]">
+                      <button
+                        type="button"
+                        class="rounded-sm text-left uppercase outline-none focus-visible:ring-1 focus-visible:ring-brand-ink focus-visible:ring-offset-4 focus-visible:ring-offset-brand-cream"
+                        aria-pressed={n === 0 ? "true" : "false"}
+                      >
+                        {feature.title}
+                      </button>
+                    </h3>
+
+                    <p class="font-sans text-[14px] font-normal leading-6 tracking-[0.02em]">
+                      {feature.description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
       ))}
     </div>
-
-    {tabs.map((tab, i) => (
-      <div
-        class="relative mt-16 w-full"
-        role="tabpanel"
-        id={id("panel", i)}
-        aria-labelledby={id("tab", i)}
-        hidden={i !== 0}
-      >
-        {tab.image && (
-          <img
-            src={tab.image}
-            alt={tab.imageAlt}
-            class="pointer-events-none mx-auto -mt-8 mb-2 w-[78%] max-w-[420px] select-none lg:absolute lg:left-[calc(var(--x)_-_3%)] lg:top-[var(--y)] lg:-z-10 lg:m-0 lg:w-[calc(var(--w)_*_0.84)] lg:max-w-none xl:left-[var(--x)] xl:w-[var(--w)]"
-            style={place(tab.imagePlacement)}
-            loading="lazy"
-            decoding="async"
-          />
-        )}
-
-        <div
-          class="lg:relative lg:h-[714px] lg:w-[504px] lg:overflow-hidden lg:[mask-image:linear-gradient(180deg,transparent_0,#000_33.61%,#000_55.88%,transparent_100%)]"
-        >
-          <!-- On wide screens every box gets a 198px row, so the list moves in even steps. -->
-          <ol
-            class="flex flex-col gap-6 transition-transform duration-[600ms] ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none lg:absolute lg:inset-x-0 lg:top-[200px] lg:grid lg:auto-rows-[198px] lg:items-start lg:-translate-y-[var(--offset,0px)]"
-            data-track
-          >
-            {tab.features.map((feature, n) => (
-              <li
-                class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-brand-cream p-6 ring-1 ring-inset ring-brand-copper/40 transition-[background-color,box-shadow] duration-[600ms] lg:bg-brand-cream/80 lg:ring-transparent lg:data-[active]:bg-brand-cream lg:data-[active]:ring-brand-copper/40"
-                data-feature
-                data-active={n === 0 ? "" : undefined}
-              >
-                <span
-                  class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 bg-[linear-gradient(174.31deg,#C57847_39.64%,#F3E4DA_208.39%)] text-brand-sand transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
-                >
-                  <Icon name={feature.icon} stroke={1.4} />
-                </span>
-
-                <div class="flex flex-col gap-4 transition-opacity duration-[600ms] lg:opacity-50 lg:group-data-[active]/feature:opacity-100">
-                  <h3 class="font-sans text-[16px] leading-[22px] font-medium uppercase tracking-[0.03em]">
-                    <button
-                      type="button"
-                      class="rounded-sm text-left uppercase outline-none focus-visible:ring-1 focus-visible:ring-brand-ink focus-visible:ring-offset-4 focus-visible:ring-offset-brand-cream"
-                      aria-pressed={n === 0 ? "true" : "false"}
-                    >
-                      {feature.title}
-                    </button>
-                  </h3>
-
-                  <p class="font-sans text-[14px] font-normal leading-6 tracking-[0.02em]">
-                    {feature.description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    ))}
   </div>
 </section>
 
 <script>
+  // On wide screens the stage pins while the page scrolls through the features of the tab
+  // in view, one step each. A step brings its box into the clear band of the list and
+  // moves the picture to its next state. Tabs only change when chosen; choosing one starts
+  // it from its first feature. On narrow screens nothing pins and everything switches
+  // directly.
+  const POSES = 3; // states of a tab's single picture, see the classes on the image
+  const STAGE_HEIGHT = 830;
+  const SMALLEST_FIT = 0.7;
+
+  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
+
   document.querySelectorAll<HTMLElement>("[data-security]").forEach((section) => {
+    const scroller = section.querySelector<HTMLElement>("[data-scroller]")!;
+    const stage = section.querySelector<HTMLElement>("[data-stage]")!;
     const tabs = [...section.querySelectorAll<HTMLElement>('[role="tab"]')];
     const panels = [...section.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const features = panels.map((panel) => [
+      ...panel.querySelectorAll<HTMLElement>("[data-feature]"),
+    ]);
 
-    const select = (index: number) => {
+    const wide = window.matchMedia("(min-width: 64rem)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const selectTab = (index: number) => {
       tabs.forEach((tab, i) => {
         tab.setAttribute("aria-selected", String(i === index));
         tab.tabIndex = i === index ? 0 : -1;
@@ -167,33 +236,109 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       panels.forEach((panel, i) => (panel.hidden = i !== index));
     };
 
+    // The panel has to be visible here, because the box positions are measured.
+    const activate = (tab: number, index: number) => {
+      const boxes = features[tab];
+      boxes.forEach((box, i) => {
+        box.toggleAttribute("data-active", i === index);
+        box.querySelector("button")?.setAttribute("aria-pressed", String(i === index));
+      });
+
+      const track = panels[tab].querySelector<HTMLElement>("[data-track]");
+      track?.style.setProperty("--offset", `${boxes[index].offsetTop - boxes[0].offsetTop}px`);
+
+      const picture = panels[tab].querySelector<HTMLElement>("[data-picture]");
+      if (!picture) return;
+      picture.dataset.state = String(index % POSES);
+      picture
+        .querySelectorAll("[data-layer]")
+        .forEach((layer, i) => layer.toggleAttribute("data-active", i === index));
+    };
+
+    let tab = 0;
+    let shown = "";
+    const show = (feature: number) => {
+      if (shown === `${tab}:${feature}`) return;
+      shown = `${tab}:${feature}`;
+      selectTab(tab);
+      activate(tab, feature);
+    };
+
+    // How far the page scrolls while the stage is pinned, and where the stage pins.
+    const distance = () => scroller.offsetHeight - stage.offsetHeight;
+    const pin = () => parseFloat(getComputedStyle(stage).top) || 0;
+
+    // The feature the scroll position points at, for the tab in view.
+    const featureInView = () => {
+      const count = features[tab].length;
+      const scrolled = clamp(pin() - scroller.getBoundingClientRect().top, 0, distance());
+      return Math.min(count - 1, Math.floor((scrolled / distance()) * count));
+    };
+
+    const scrollToFeature = (feature: number) => {
+      const start = scroller.getBoundingClientRect().top + window.scrollY - pin();
+      window.scrollTo({
+        top: start + ((feature + 0.5) / features[tab].length) * distance(),
+        behavior: reduced.matches ? "auto" : "smooth",
+      });
+    };
+
+    const choose = (nextTab: number, feature: number) => {
+      tab = nextTab;
+      if (!wide.matches) {
+        show(feature);
+        return;
+      }
+      // Switch at once, then let the page travel to the chosen feature if it isn't there.
+      const inView = featureInView();
+      show(inView);
+      if (inView !== feature) scrollToFeature(feature);
+    };
+
+    const update = () => {
+      if (!wide.matches) {
+        section.style.setProperty("--reveal", "1");
+        return;
+      }
+
+      const view = window.innerHeight;
+      // Shrink the stage on screens too short to hold it.
+      section.style.setProperty(
+        "--fit",
+        clamp((view - 32) / STAGE_HEIGHT, SMALLEST_FIT, 1).toFixed(3),
+      );
+
+      const box = scroller.getBoundingClientRect();
+      if (box.bottom < -view || box.top > view * 2) return;
+
+      show(featureInView());
+
+      // The picture and the list come into view as the stage rises up the screen.
+      const reveal = reduced.matches ? 1 : clamp((view - box.top) / (view * 0.6), 0, 1);
+      section.style.setProperty("--reveal", reveal.toFixed(3));
+    };
+
     tabs.forEach((tab, i) => {
-      tab.addEventListener("click", () => select(i));
+      tab.addEventListener("click", () => choose(i, 0));
       tab.addEventListener("keydown", (event) => {
-        const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
-        if (!step) return;
-        const next = (i + step + tabs.length) % tabs.length;
-        select(next);
-        tabs[next].focus();
+        const move = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        if (!move) return;
+        const next = (i + move + tabs.length) % tabs.length;
+        choose(next, 0);
+        tabs[next].focus({ preventScroll: true });
       });
     });
 
-    panels.forEach((panel) => {
-      const track = panel.querySelector<HTMLElement>("[data-track]");
-      const features = [...panel.querySelectorAll<HTMLElement>("[data-feature]")];
-      if (!track) return;
+    features.forEach((boxes, owner) =>
+      boxes.forEach((box, feature) =>
+        box.addEventListener("click", () => choose(owner, feature)),
+      ),
+    );
 
-      // The chosen box slides up into the clear band of the list; the rest fade around it.
-      const activate = (index: number) => {
-        features.forEach((feature, i) => {
-          feature.toggleAttribute("data-active", i === index);
-          feature.querySelector("button")?.setAttribute("aria-pressed", String(i === index));
-        });
-        const offset = features[index].offsetTop - features[0].offsetTop;
-        track.style.setProperty("--offset", `${offset}px`);
-      };
-
-      features.forEach((feature, i) => feature.addEventListener("click", () => activate(i)));
-    });
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    wide.addEventListener("change", update);
+    reduced.addEventListener("change", update);
+    update();
   });
 </script>
