@@ -14,27 +14,33 @@ const { eyebrow = "Suite", name, imageSrc, imageAlt } = Astro.props;
 <section class="relative isolate w-full bg-brand-teal-night pt-24 text-brand-cream">
   <Nav variant="light" />
 
+  <!--
+    On phones the picture is as tall as the screen, as in the 402 x 874 design. The phone
+    design is also lighter than the desktop export the picture was made from, by 1.19.
+  -->
   <div
-    class="relative aspect-square min-h-[calc(100svh-6rem)] w-full overflow-hidden rounded-tr-[32px] md:rounded-tr-[60px]"
+    class="relative aspect-square min-h-[100svh] w-full overflow-hidden rounded-tr-[32px] md:min-h-[calc(100svh-6rem)] md:rounded-tr-[60px]"
   >
     <img
       src={imageSrc}
       alt={imageAlt}
-      class="absolute inset-0 h-full w-full object-cover object-[28%_center] md:object-center"
+      class="absolute inset-0 h-full w-full object-cover object-[29.6%_center] brightness-[1.19] md:object-center md:brightness-100"
       fetchpriority="high"
       decoding="async"
     />
   </div>
 
-  <div class="absolute inset-x-0 top-[48svh] -translate-y-1/2 px-6 text-center">
+  <div
+    class="absolute inset-x-0 top-[calc(6rem_+_40.8svh)] -translate-y-1/2 px-6 text-center md:top-[48svh]"
+  >
     <p
-      class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em] text-brand-cream"
+      class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em] text-brand-cream"
     >
       {eyebrow}
     </p>
 
     <h1
-      class="mt-1 md:mt-2 font-sans text-[52px] leading-[1.1] font-light uppercase tracking-[0.03em] md:text-[80px] lg:text-[96px] xl:text-[120px] text-brand-cream"
+      class="mt-4 font-sans text-[40px] leading-[1.1] font-light uppercase tracking-[0.05em] text-brand-cream md:mt-2 md:tracking-[0.03em] md:text-[80px] lg:text-[96px] xl:text-[120px]"
     >
       {name}
     </h1>

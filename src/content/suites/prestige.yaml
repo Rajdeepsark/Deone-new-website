@@ -50,7 +50,8 @@ benefits:
     wherever life leads
 
   # `href` is where "Learn more" goes; it defaults to "#" until the real pages exist.
-  # Line breaks in a description are kept on wide screens, to match the design.
+  # Phones don't show "Learn more", as in the phone design.
+  # Line breaks in a description are kept on phones and wide screens, to match the designs.
   items:
     - title: Banking
       description: |-
@@ -195,6 +196,21 @@ included:
       size: tall
       image: /suites/prestige-included-cold-storage-vault.jpg
       imageAlt: Man holding a metal card and a phone beside a vault device
+
+  # Phones show eight of the cards, in two columns of four, top to bottom.
+  # `card` is the card's place in the list above (1 to 12). `size` is its height there:
+  # `short` (177 x 224) or `tall` (177 x 264) in the 402px design. `label` renames it.
+  phone:
+    left:
+      - { card: 1, size: short } # Onchain Banking Account
+      - { card: 9, size: short } # Rewards Hub
+      - { card: 3, size: tall } # Shopping Rewards
+      - { card: 4, size: tall } # Price and Purchase Protection
+    right:
+      - { card: 5, size: tall } # Cloud Miner
+      - { card: 2, size: short, label: Metal Tokenized Card } # the Prestige Card picture
+      - { card: 10, size: short } # Wellness
+      - { card: 12, size: tall } # Cold Storage Vault
 
 details:
   headline: Full benefits

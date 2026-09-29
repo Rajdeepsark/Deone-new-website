@@ -6,14 +6,21 @@ interface Card {
   imageAlt: string;
 }
 
+interface PhoneCard {
+  card: number;
+  size: "short" | "tall";
+  label?: string;
+}
+
 interface Props {
   eyebrow: string;
   headline: string;
   subtext: string;
   items: Card[];
+  phone?: { left: PhoneCard[]; right: PhoneCard[] };
 }
 
-const { eyebrow, headline, subtext, items } = Astro.props;
+const { eyebrow, headline, subtext, items, phone } = Astro.props;
 
 // Cards are listed column by column, so equal slices give the three columns.
 const perColumn = Math.ceil(items.length / 3);
@@ -22,38 +29,94 @@ const columns = [0, 1, 2].map((i) => items.slice(i * perColumn, (i + 1) * perCol
 // The rounded corners mirror around the middle column. The exported pictures have
 // the same corners cut into them, so each card keeps its corners at every width.
 const corners = ["rounded-tr-[24px]", "rounded-t-[24px]", "rounded-tl-[24px]"];
+
+// Phones show two columns whose corners mirror each other. The suite picks which cards
+// show there and how tall they are; without a pick, every card shows, alternating sides.
+const phoneColumns = phone
+  ? [phone.left, phone.right].map((entries) =>
+      entries
+        .filter(({ card }) => items[card - 1])
+        .map(({ card, size, label }) => ({
+          ...items[card - 1],
+          size,
+          label: label ?? items[card - 1].label,
+        })),
+    )
+  : [0, 1].map((side) =>
+      items
+        .filter((_, i) => i % 2 === side)
+        .map((item) => ({ ...item, size: item.size === "tall" ? "tall" : "short" })),
+    );
+const phoneCorners = ["rounded-tr-[24px]", "rounded-tl-[24px]"];
 ---
 
-<section class="bg-blush-light px-6 py-24 text-brand-ink md:py-[160px]">
-  <header class="text-center">
+<section
+  class="bg-blush-light bg-gradient-to-b from-[#f9e5db] to-sand-warm px-3 py-[120px] text-brand-ink md:bg-none md:px-6 md:py-[160px]"
+>
+  <header class="px-4 text-center md:px-0">
     <p
-      class="font-serif text-[16px] leading-[22px] font-medium uppercase tracking-[0.08em] md:text-[18px]"
+      class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.09em] md:tracking-[0.08em]"
     >
       {eyebrow}
     </p>
 
     <h2
-      class="mt-6 font-sans text-[28px] leading-[1.3] font-light uppercase tracking-[0.02em] md:text-[42px]"
+      class="mt-6 font-sans text-[30px] leading-[37px] font-normal uppercase tracking-[0.03em] md:text-[42px] md:leading-[1.3] md:font-light md:tracking-[0.02em]"
     >
       {headline}
     </h2>
 
     <p
-      class="mt-6 font-sans text-[14px] font-normal leading-[1.7] tracking-[0.01em] md:text-[16px]"
+      class="mt-8 font-sans text-[16px] font-normal leading-6 tracking-[0.02em] md:mt-6 md:leading-[1.7] md:tracking-[0.01em]"
     >
       {subtext}
     </p>
   </header>
 
-  <div
-    class="mx-auto mt-16 max-w-[1032px] columns-1 gap-6 sm:columns-2 lg:mt-[120px] lg:flex lg:columns-auto"
-  >
-    {columns.map((cards, column) => (
-      <ul class="contents lg:flex lg:flex-1 lg:flex-col lg:gap-6">
+  <!-- Phones: the cards run 16px from the screen edges, a little wider than the text. -->
+  <div class="mt-[120px] flex gap-4 px-1 md:hidden">
+    {phoneColumns.map((cards, column) => (
+      <ul class="flex min-w-0 flex-1 flex-col gap-4">
         {cards.map((card) => (
           <li
             class:list={[
-              "relative isolate mb-6 break-inside-avoid overflow-hidden bg-brand-ink lg:mb-0",
+              "relative isolate overflow-hidden bg-brand-ink",
+              card.size === "tall" ? "aspect-[177/264]" : "aspect-[177/224]",
+              phoneCorners[column],
+            ]}
+          >
+            {card.image ? (
+              <img
+                src={card.image}
+                alt={card.imageAlt}
+                class="absolute inset-0 -z-10 h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="sr-only">{card.imageAlt}</span>
+            )}
+
+            {card.label && (
+              <p class="absolute inset-0 flex flex-col justify-end bg-gradient-to-b from-transparent to-black/40 px-4 pb-5 font-sans text-[14px] font-medium leading-[1.5] tracking-[0.02em] text-brand-sand">
+                {card.label.split("\n").map((line) => (
+                  <span class="block">{line}</span>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+
+  <div class="mx-auto mt-16 hidden max-w-[1032px] gap-6 md:flex lg:mt-[120px]">
+    {columns.map((cards, column) => (
+      <ul class="flex min-w-0 flex-1 flex-col gap-6">
+        {cards.map((card) => (
+          <li
+            class:list={[
+              "relative isolate overflow-hidden bg-brand-ink",
               card.size === "tall" ? "aspect-[328/431]" : "aspect-square",
               corners[column],
             ]}

@@ -24,24 +24,50 @@ const { headline, subtext, gallery, slides } = Astro.props;
 
 // Each gallery picture, in gallery order: where it floats around the headline, and how
 // it behaves while scrolling. All values are px at the design width.
+//   phone - place and size in the phone design, a 402 x 729.5 frame from edge to edge
+//   wide  - place and size in the desktop design, an 856 x 894 frame
 //   blur  - softness at rest, as in the design
 //   soft  - softness when fully out of focus
 //   rise  - how far it travels upward, ahead of the page, while scrolling down
 // The closer a picture appears, the more it softens and the further it rises.
 const slots = [
-  { position: "left-0 top-[14.9%] w-[15%] md:w-[10.4%]", blur: 4, soft: 10, rise: 70 },
-  { position: "right-0 top-0 w-[24%] md:w-[17.76%]", blur: 0, soft: 12, rise: 110 },
-  { position: "left-0 bottom-0 w-[36%] md:w-[28.04%]", blur: 0, soft: 14, rise: 150 },
-  { position: "right-0 top-[58.6%] w-[15%] md:w-[10.4%]", blur: 4, soft: 10, rise: 90 },
+  {
+    phone: "left-[15.92%] top-[19.81%] w-[15.92%]",
+    wide: "md:left-0 md:top-[14.9%] md:w-[10.4%]",
+    blur: 4,
+    soft: 10,
+    rise: 70,
+  },
+  {
+    phone: "right-[3.98%] top-0 w-[24.88%]",
+    wide: "md:right-0 md:w-[17.76%]",
+    blur: 0,
+    soft: 12,
+    rise: 110,
+  },
+  {
+    phone: "bottom-0 left-0 w-[24.88%]",
+    wide: "md:w-[28.04%]",
+    blur: 0,
+    soft: 14,
+    rise: 150,
+  },
+  {
+    phone: "right-[15.42%] top-[61.34%] w-[15.92%]",
+    wide: "md:right-0 md:top-[58.6%] md:w-[10.4%]",
+    blur: 4,
+    soft: 10,
+    rise: 90,
+  },
 ];
 ---
 
 <section
-  class="bg-gradient-to-b from-blush-light to-blush pb-24 pt-24 text-brand-ink md:pb-[240px] md:pt-[155px]"
+  class="bg-gradient-to-b from-blush-light to-blush pb-24 pt-[62px] text-brand-ink md:pb-[240px] md:pt-[155px]"
 >
-  <div class="px-6">
+  <div class="md:px-6">
     <div
-      class="@container relative mx-auto aspect-[856/894] w-full max-w-[856px]"
+      class="@container relative mx-auto aspect-[402/729.5] w-full max-w-[480px] md:aspect-[856/894] md:max-w-[856px]"
       data-gallery
     >
       {gallery.slice(0, slots.length).map((picture, i) => (
@@ -50,7 +76,8 @@ const slots = [
           alt={picture.alt}
           class:list={[
             "absolute aspect-[240/313] rounded-tr-[12px] object-cover will-change-[filter,translate] [filter:blur(var(--blur))] [transition:translate_450ms_cubic-bezier(0.2,0.8,0.2,1),filter_450ms_cubic-bezier(0.2,0.8,0.2,1)] [translate:0_var(--shift,0px)] motion-reduce:transition-none md:rounded-tr-[24px]",
-            slots[i].position,
+            slots[i].phone,
+            slots[i].wide,
           ]}
           style={`--blur:${slots[i].blur}px`}
           loading="lazy"
@@ -63,7 +90,7 @@ const slots = [
       ))}
 
       <h2
-        class="absolute inset-x-0 top-[22.93%] text-center font-sans text-[clamp(32px,7.48cqw,64px)] leading-[1.094] font-light uppercase tracking-[0.01em]"
+        class="absolute inset-x-0 top-[39.3%] text-center font-sans text-[clamp(28px,9.95cqw,48px)] leading-[1.1] font-light uppercase tracking-[0.05em] md:top-[22.93%] md:text-[clamp(32px,7.48cqw,64px)] md:leading-[1.094] md:tracking-[0.01em]"
       >
         {headline.split("\n").map((line) => (
           <span class="block whitespace-nowrap">{line}</span>
@@ -71,16 +98,17 @@ const slots = [
       </h2>
     </div>
 
+    <!-- On phones the text runs on and wraps by itself; wide screens keep the set lines. -->
     <p
-      class="mx-auto mt-24 max-w-[856px] text-center font-sans text-[18px] leading-[1.2] font-normal uppercase tracking-[0.03em] md:mt-[191px] md:text-[24px]"
+      class="mx-auto mt-[178px] max-w-[300px] text-center font-sans text-[18px] leading-[22px] font-normal uppercase tracking-[0.06em] md:mt-[191px] md:max-w-[856px] md:text-[24px] md:leading-[1.2] md:tracking-[0.03em]"
     >
       {subtext.split("\n").map((line) => (
-        <span class="block">{line}</span>
+        <span class="md:block">{line} </span>
       ))}
     </p>
   </div>
 
-  <div class="mt-32 md:mt-[240px] lg:mt-[400px]">
+  <div class="mt-[200px] md:mt-[240px] lg:mt-[400px]">
     <SuiteSlider slides={slides} />
   </div>
 </section>

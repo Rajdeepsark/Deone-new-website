@@ -34,22 +34,29 @@ const toRoman = (n: number) => {
 const hasNext = slides.length > 1;
 ---
 
+<!-- Wide screens clip the small frame at the edge. Phones don't, or the slide lines would be cut. -->
 <div
-  class="@container overflow-hidden"
+  class="@container md:overflow-hidden"
   role="group"
   aria-roledescription="carousel"
   aria-label={label}
   data-slider
 >
-  <div class="flex flex-col text-brand-ink lg:flex-row lg:items-end">
+  <div class="flex flex-col text-brand-ink md:flex-row md:items-end">
+    <!--
+      On phones the pictures stand in a row that is swiped through, the next one showing
+      at the edge. A picture is never wider than 400px, and from there on the row is
+      centred. On wide screens they share one frame and slide through it.
+    -->
     <div
-      class="relative aspect-[744/900] w-[calc(100cqw-24px)] flex-none overflow-hidden rounded-tr-[24px] lg:aspect-auto lg:h-[min(59.52cqw,900px)] lg:w-[49.2cqw]"
+      class="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pl-[var(--lead)] scroll-pl-[var(--lead)] [--lead:max(16px,calc((100cqw_-_400px)_/_2))] [--slide:min(calc(100cqw_-_48px),400px)] [scrollbar-width:none] after:w-[calc(100cqw_-_var(--lead)_-_var(--slide)_-_16px)] after:flex-none after:content-[''] md:relative md:block md:h-[min(59.52cqw,900px)] md:w-[49.2cqw] md:flex-none md:overflow-hidden md:rounded-tr-[24px] md:pl-0 md:after:hidden [&::-webkit-scrollbar]:hidden"
+      data-slide-track
     >
       {slides.map((slide, i) => (
         <img
           src={slide.image}
           alt={slide.imageAlt}
-          class="invisible absolute inset-0 h-full w-full object-cover data-[active]:visible"
+          class="aspect-[354/464] w-[var(--slide)] flex-none snap-start rounded-tr-[24px] object-cover md:invisible md:absolute md:inset-0 md:aspect-auto md:h-full md:w-full md:rounded-none md:data-[active]:visible"
           loading="lazy"
           decoding="async"
           data-slide-image
@@ -58,7 +65,9 @@ const hasNext = slides.length > 1;
       ))}
     </div>
 
-    <div class="flex-none px-6 pt-10 lg:w-[34.92cqw] lg:self-start lg:px-0 lg:pl-[5.82cqw] lg:pt-[12.57cqw]">
+    <div
+      class="flex-none px-12 pt-8 text-center md:w-[34.92cqw] md:self-start md:px-0 md:pl-[5.82cqw] md:pt-[12.57cqw] md:text-left"
+    >
       <div class="grid overflow-hidden">
         {slides.map((slide, i) => (
           <div
@@ -70,15 +79,15 @@ const hasNext = slides.length > 1;
             data-slide-text
             data-active={i === 0 ? "" : undefined}
           >
-            <p class="font-serif text-[18px] font-medium uppercase tracking-[0.08em]">
+            <p class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em]">
               {toRoman(i + 1)}
             </p>
 
-            <h3 class="mt-1.5 font-sans text-[28px] leading-[1.2] font-normal uppercase tracking-[0.04em] lg:text-[32px]">
+            <h3 class="mt-[13px] font-sans text-[24px] leading-[1.2] font-normal uppercase tracking-[0.04em] md:mt-1.5 md:text-[28px] lg:text-[32px]">
               {slide.title}
             </h3>
 
-            <p class="mt-6 font-sans text-[16px] font-normal leading-[1.7] tracking-[0.01em]">
+            <p class="mt-[27px] font-sans text-[16px] font-normal leading-[27px] tracking-[0.01em] md:mt-6">
               {slide.description}
             </p>
           </div>
@@ -88,7 +97,7 @@ const hasNext = slides.length > 1;
       {hasNext && (
         <button
           type="button"
-          class="group/next mt-12 flex items-center gap-4 outline-none lg:mt-[67px]"
+          class="group/next mt-[67px] hidden items-center gap-4 outline-none md:flex"
           data-slide-next
         >
           <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-ink/20 transition group-hover/next:bg-brand-ink/5 group-focus-visible/next:border-brand-ink">
@@ -102,12 +111,37 @@ const hasNext = slides.length > 1;
         </button>
       )}
 
+      {hasNext && (
+        <!--
+          Phones: one line per slide, the long one marks the slide in view. Each line sits
+          in a taller button so it can be tapped; the margins put the lines 64px under the
+          text and leave the space below as it is.
+        -->
+        <div
+          class="-mb-[22px] mt-[42px] flex justify-center md:hidden"
+          role="group"
+          aria-label="Choose a slide"
+        >
+          {slides.map((slide, i) => (
+            <button
+              type="button"
+              class="group/mark flex h-11 items-center px-[2.5px] outline-none"
+              aria-label={`${i + 1} of ${slides.length}: ${slide.title}`}
+              aria-current={i === 0 ? "true" : undefined}
+              data-slide-mark
+            >
+              <span class="block h-px w-4 bg-brand-ink/30 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-focus-visible/mark:bg-brand-ink group-aria-[current]/mark:w-16 group-aria-[current]/mark:bg-brand-copper motion-reduce:transition-none" />
+            </button>
+          ))}
+        </div>
+      )}
+
       <p class="sr-only" aria-live="polite" data-slider-status></p>
     </div>
 
     {hasNext && (
       <div
-        class="relative hidden h-[min(28.17cqw,426px)] w-[23.28cqw] flex-none overflow-hidden lg:block"
+        class="relative hidden h-[min(28.17cqw,426px)] w-[23.28cqw] flex-none overflow-hidden md:block"
         aria-hidden="true"
       >
         {slides.map((slide, i) => (
@@ -134,6 +168,10 @@ const hasNext = slides.length > 1;
   const DURATION = 900;
   const EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
 
+  // On phones the pictures follow the finger, so only the text needs moving.
+  const TEXT_DURATION = 450;
+  const TEXT_TRAVEL = 24;
+
   type Motion = { enter: Keyframe[]; leave: Keyframe[] };
 
   // Everything travels the full width of its own frame, which clips it.
@@ -159,28 +197,42 @@ const hasNext = slides.length > 1;
   };
 
   document.querySelectorAll<HTMLElement>("[data-slider]").forEach((slider) => {
+    const track = slider.querySelector<HTMLElement>("[data-slide-track]")!;
     const images = [...slider.querySelectorAll<HTMLElement>("[data-slide-image]")];
     const previews = [...slider.querySelectorAll<HTMLElement>("[data-slide-preview]")];
     const texts = [...slider.querySelectorAll<HTMLElement>("[data-slide-text]")];
+    const marks = [...slider.querySelectorAll<HTMLElement>("[data-slide-mark]")];
     const status = slider.querySelector<HTMLElement>("[data-slider-status]");
     const count = images.length;
     const after = (index: number) => (index + 1) % count;
 
+    const wide = window.matchMedia("(min-width: 48rem)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     let active = 0;
     let sliding = false;
+
+    // Everything that names the slide in view, apart from what is animated.
+    const mark = (index: number) => {
+      active = index;
+      texts.forEach((text, i) => (text.inert = i !== index));
+      marks.forEach((item, i) =>
+        i === index
+          ? item.setAttribute("aria-current", "true")
+          : item.removeAttribute("aria-current"),
+      );
+      if (status) {
+        const title = texts[index].querySelector("h3")?.textContent?.trim();
+        status.textContent = `Slide ${index + 1} of ${count}: ${title}`;
+      }
+    };
 
     slider.querySelector("[data-slide-next]")?.addEventListener("click", async () => {
       if (sliding) return;
       sliding = true;
 
       const previous = active;
-      active = after(active);
-
-      texts.forEach((text, i) => (text.inert = i !== active));
-      if (status) {
-        const title = texts[active].querySelector("h3")?.textContent?.trim();
-        status.textContent = `Slide ${active + 1} of ${count}: ${title}`;
-      }
+      mark(after(active));
 
       // The small frame always shows the picture that comes after the big one.
       await Promise.all([
@@ -189,6 +241,51 @@ const hasNext = slides.length > 1;
         swap(texts[previous], texts[active], slide),
       ]);
       sliding = false;
+    });
+
+    // Phones. The distance from one picture to the next in the row.
+    const step = () => (count > 1 ? images[1].offsetLeft - images[0].offsetLeft : 0);
+
+    track.addEventListener(
+      "scroll",
+      () => {
+        if (wide.matches || !step()) return;
+
+        const index = Math.min(count - 1, Math.max(0, Math.round(track.scrollLeft / step())));
+        if (index === active) return;
+
+        const from = index > active ? 1 : -1;
+        mark(index);
+
+        // Kept in step for wide screens, should the window grow.
+        images.forEach((image, i) => image.toggleAttribute("data-active", i === index));
+        previews.forEach((image, i) => image.toggleAttribute("data-active", i === after(index)));
+
+        texts.forEach((text, i) => {
+          text.getAnimations().forEach((animation) => animation.cancel());
+          text.toggleAttribute("data-active", i === index);
+        });
+        if (reduced.matches) return;
+        texts[index].animate(
+          [
+            { opacity: 0, transform: `translateX(${from * TEXT_TRAVEL}px)` },
+            { opacity: 1, transform: "translateX(0)" },
+          ],
+          { duration: TEXT_DURATION, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+        );
+      },
+      { passive: true },
+    );
+
+    marks.forEach((item, i) =>
+      item.addEventListener("click", () =>
+        track.scrollTo({ left: i * step(), behavior: reduced.matches ? "auto" : "smooth" }),
+      ),
+    );
+
+    // Coming back to a phone width, the row starts at the slide in view.
+    wide.addEventListener("change", () => {
+      if (!wide.matches) track.scrollTo({ left: active * step(), behavior: "auto" });
     });
   });
 </script>

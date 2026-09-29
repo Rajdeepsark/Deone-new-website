@@ -18,8 +18,17 @@ export async function getStaticPaths() {
 }
 
 const { suite } = Astro.props;
-const { name, description, hero, pictures, benefits, quote, security, included, details } =
-  suite.data;
+const {
+  name,
+  description,
+  hero,
+  pictures,
+  benefits,
+  quote,
+  security,
+  included,
+  details,
+} = suite.data;
 ---
 
 <Base title={`DeOne — ${name} Suite`} description={description}>
@@ -52,6 +61,7 @@ const { name, description, hero, pictures, benefits, quote, security, included, 
     headline={included.headline}
     subtext={included.subtext}
     items={included.items}
+    phone={included.phone}
   />
   <SuiteDetails headline={details.headline} subtext={details.subtext} groups={details.groups} />
 </Base>

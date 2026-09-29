@@ -2,6 +2,14 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 import { iconNames } from "./icons";
 
+// A "What's included" card as phones show it: its place in the list (from 1), its
+// height there, and optionally another label.
+const phoneCard = z.object({
+  card: z.number().int().min(1),
+  size: z.enum(["short", "tall"]),
+  label: z.string().optional(),
+});
+
 const suites = defineCollection({
   loader: glob({ pattern: "*.yaml", base: "./src/content/suites" }),
   schema: z.object({
@@ -93,6 +101,8 @@ const suites = defineCollection({
           imageAlt: z.string(),
         }),
       ),
+      // Which cards phones show, in two columns, and how tall each is there.
+      phone: z.object({ left: z.array(phoneCard), right: z.array(phoneCard) }).optional(),
     }),
     details: z.object({
       headline: z.string(),

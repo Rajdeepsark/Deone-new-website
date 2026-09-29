@@ -44,10 +44,10 @@ const {
     </p>
 
     <h1
-      class="mt-3 md:mt-4 mx-auto font-sans text-[36px] leading-[1.1] font-light uppercase tracking-[0.01em] md:text-[52px] lg:text-[64px] text-brand-cream"
+      class="mt-3 md:mt-4 mx-auto max-w-[12em] text-balance font-sans text-[clamp(28px,8.4vw,36px)] leading-[1.1] font-light uppercase tracking-[0.01em] sm:max-w-none md:text-[52px] lg:text-[64px] text-brand-cream"
     >
       {headline.split("\n").map((line) => (
-        <span class="block whitespace-nowrap">{line}</span>
+        <span class="sm:block sm:whitespace-nowrap">{line} </span>
       ))}
     </h1>
   </div>

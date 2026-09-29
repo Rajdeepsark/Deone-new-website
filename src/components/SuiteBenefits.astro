@@ -15,19 +15,27 @@ interface Props {
 }
 
 const { eyebrow, headline, ctaLabel = "Learn more", items } = Astro.props;
+
+// In the phone design the last picture is rounded on the other side.
+const corner = (i: number) =>
+  i === items.length - 1
+    ? "rounded-tl-[24px] md:rounded-tl-none md:rounded-tr-[24px]"
+    : "rounded-tr-[24px]";
 ---
 
 <section
-  class="bg-gradient-to-b from-blush to-blush-light px-6 pb-24 pt-10 text-brand-ink md:pb-[240px]"
+  class="bg-gradient-to-b from-blush to-blush-light px-4 pb-[120px] pt-[120px] text-brand-ink md:px-6 md:pb-[240px] md:pt-10"
 >
   <div class="mx-auto max-w-[1032px]">
     <header class="text-center">
-      <p class="font-serif text-[16px] font-medium uppercase tracking-[0.08em] md:text-[18px]">
+      <p
+        class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.09em] md:leading-normal md:tracking-[0.08em]"
+      >
         {eyebrow}
       </p>
 
       <h2
-        class="mt-5 font-sans text-[28px] leading-[1.23] font-light uppercase tracking-[0.02em] md:text-[42px]"
+        class="mx-auto mt-6 max-w-[320px] font-sans text-[30px] leading-[37px] font-normal uppercase tracking-[0.03em] md:mt-5 md:max-w-none md:text-[42px] md:leading-[1.23] md:font-light md:tracking-[0.02em]"
       >
         {headline.split("\n").map((line) => (
           <span class="block">{line}</span>
@@ -35,40 +43,53 @@ const { eyebrow, headline, ctaLabel = "Learn more", items } = Astro.props;
       </h2>
     </header>
 
-    <ul class="mt-16 grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:mt-[120px] lg:grid-cols-3">
-      {items.map((item) => (
-        <li class="flex flex-col items-start gap-7">
+    <!-- Between phones and tablets the cards sit two across, and a card left alone is centred. -->
+    <ul
+      class="mt-[120px] grid gap-x-6 gap-y-16 sm:grid-cols-2 md:mt-16 md:grid-cols-3 lg:mt-[120px]"
+    >
+      {items.map((item, i) => (
+        <li class="flex flex-col items-start gap-7 sm:max-md:last:odd:col-span-2 sm:max-md:last:odd:mx-auto sm:max-md:last:odd:w-[calc(50%_-_12px)]">
           {item.image ? (
             <img
               src={item.image}
               alt={item.imageAlt}
-              class="aspect-[328/430] w-full rounded-tr-[24px] object-cover"
+              class:list={[
+                "aspect-[370/484] w-full object-cover md:aspect-[328/430]",
+                corner(i),
+              ]}
               loading="lazy"
               decoding="async"
             />
           ) : (
             <div
-              class="aspect-[328/430] w-full rounded-tr-[24px] bg-brand-ink/10"
+              class:list={[
+                "aspect-[370/484] w-full bg-brand-ink/10 md:aspect-[328/430]",
+                corner(i),
+              ]}
               role="img"
               aria-label={item.imageAlt}
             />
           )}
 
           <div class="flex flex-col gap-4">
-            <h3 class="font-sans text-[16px] font-medium uppercase leading-[22px] tracking-[0.03em]">
+            <h3
+              class="font-sans text-[18px] font-medium uppercase leading-[22px] tracking-[0.06em] md:text-[16px] md:tracking-[0.03em]"
+            >
               {item.title}
             </h3>
 
-            <p class="font-sans text-[14px] font-normal leading-[1.7] tracking-[0.02em]">
+            <!-- The set line breaks hold where a card is wide enough: phones and wide screens. -->
+            <p class="font-sans text-[14px] font-normal leading-6 tracking-[0.02em] md:leading-[1.7]">
               {item.description.split("\n").map((line) => (
-                <span class="xl:block">{line} </span>
+                <span class="max-sm:block xl:block">{line} </span>
               ))}
             </p>
           </div>
 
+          <!-- The phone design has no link here. -->
           <a
             href={item.href}
-            class="border-b border-brand-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-brand-ink"
+            class="border-b border-brand-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-brand-ink max-md:hidden"
           >
             {ctaLabel}
             <span class="sr-only"> about {item.title}</span>

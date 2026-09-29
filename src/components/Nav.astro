@@ -1,4 +1,6 @@
 ---
+import Icon from "./Icon.astro";
+
 interface Props {
   variant?: "light" | "dark";
 }
@@ -6,18 +8,30 @@ interface Props {
 const { variant = "light" } = Astro.props;
 
 const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
+
+// Phones get square icon buttons, as in the phone design; wider screens spell them out.
+const iconButton =
+  "flex h-10 w-10 items-center justify-center rounded-lg border border-brand-cream/40 bg-brand-teal-night transition hover:border-brand-cream/70 md:hidden";
 ---
 
 <header
   class:list={[
     "absolute inset-x-0 top-0 z-30 h-[88px]",
-    "grid grid-cols-3 items-center px-6 md:px-10",
+    "grid grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 md:px-10",
     textClass,
   ]}
 >
   <button
     type="button"
-    class="flex h-10 items-center gap-2 rounded-lg border border-brand-cream/40 bg-overlay-mid/10 backdrop-blur-sm px-3 justify-self-start text-[12px] font-medium uppercase tracking-[0.13em] hover:bg-overlay-mid/25"
+    class:list={[iconButton, "col-start-1 row-start-1 justify-self-start"]}
+    aria-label="Change language"
+  >
+    <Icon name="globe" />
+  </button>
+
+  <button
+    type="button"
+    class="col-start-1 row-start-1 hidden h-10 items-center gap-2 justify-self-start rounded-lg border border-brand-cream/40 bg-overlay-mid/10 px-3 text-[12px] font-medium uppercase tracking-[0.13em] backdrop-blur-sm hover:bg-overlay-mid/25 md:flex"
     aria-label="Change language"
   >
     <span>EN</span>
@@ -28,11 +42,11 @@ const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
 
   <a
     href="/"
-    class="justify-self-center inline-flex items-center"
+    class="col-start-2 row-start-1 inline-flex items-center justify-self-center"
     aria-label="DeOne — home"
   >
     <svg
-      class="h-7 w-auto"
+      class="h-auto w-[109px] md:h-7 md:w-auto"
       viewBox="0 0 153 28"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +60,17 @@ const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
     </svg>
   </a>
 
-  <nav class="justify-self-end flex h-10 items-center gap-4 rounded-lg border border-brand-cream/40 bg-overlay-mid/10 backdrop-blur-sm px-4 text-[12px] font-medium uppercase tracking-[0.13em]">
+  <a
+    href="/login"
+    class:list={[iconButton, "col-start-3 row-start-1 justify-self-end"]}
+    aria-label="Log in or sign up"
+  >
+    <Icon name="user" />
+  </a>
+
+  <nav
+    class="col-start-3 row-start-1 hidden h-10 items-center gap-4 justify-self-end whitespace-nowrap rounded-lg border border-brand-cream/40 bg-overlay-mid/10 px-4 text-[12px] font-medium uppercase tracking-[0.13em] backdrop-blur-sm md:flex"
+  >
     <a href="/login" class="hover:opacity-80">Log in</a>
     <span aria-hidden="true" class="h-4 w-px bg-brand-cream/40"></span>
     <a href="/signup" class="hover:opacity-80">Sign up</a>

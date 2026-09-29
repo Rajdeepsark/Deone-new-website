@@ -12,6 +12,9 @@ export const icons = {
   percent: `<circle cx="4" cy="4" r="3.3" /><circle cx="16" cy="16" r="3.3" /><path d="M18 2 2 18" />`,
   wallet: `<path d="M16.1 6.6V3.2a1.6 1.6 0 0 0-1.95-1.56L2.4 4.2A2.2 2.2 0 0 0 .65 6.35" /><path d="M.65 6.35v10.4a2.6 2.6 0 0 0 2.6 2.6h13.4a1.95 1.95 0 0 0 1.95-1.95V8.55a1.95 1.95 0 0 0-1.95-1.95H2.9" /><path d="M13.1 12.7h.01" />`,
   lock: `<rect x="1.7" y="8.2" width="16" height="11.15" rx="2" /><path d="M5.4 8.2V5.25a4.3 4.3 0 0 1 8.6 0V8.2" /><path d="M9.7 14h.01" />`,
+  // Top bar on phones. The globe follows the Lucide outline (ISC licence).
+  globe: `<circle cx="10" cy="10" r="9.35" /><path d="M10 .65a13.56 13.56 0 0 0 0 18.7 13.56 13.56 0 0 0 0-18.7M.65 10h18.7" />`,
+  user: `<circle cx="10" cy="5.55" r="3.9" /><path d="M3.5 19.35h13a6.5 6.5 0 0 0-13 0Z" />`,
 } as const;
 
 export type IconName = keyof typeof icons;
