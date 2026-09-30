@@ -1,7 +1,32 @@
-name: Prestige
+# PLACEHOLDER CONTENT: for now this page reuses the Prestige copy and pictures. Only the
+# name, the colours below and the closing banner differ. Replace the copy and pictures
+# with the Executive ones as they arrive.
+name: Executive
 
-# Colours: this page uses the default suite palette from src/styles/global.css.
-# To change them, add a `theme:` block like the one in executive.yaml.
+# The page's colours, section by section, as the design file gives them. `background`
+# takes any CSS background; `ink` is the colour of the section's words and lines. Quote
+# any value with a # in it, or YAML reads the rest of the line as a comment.
+# Sections left out keep the Prestige look, whose values are in src/styles/global.css.
+theme:
+  # "Where ambition takes you"
+  pictures:
+    background: "linear-gradient(180deg, #939595 0%, #454947 100%)"
+    ink: "#faf5ef"
+  # "A higher standard, wherever life leads"
+  benefits:
+    background: "linear-gradient(0deg, #454947, #454947), linear-gradient(180deg, #939595 0%, #E4E5E5 100%), linear-gradient(180deg, #9FC4C8 0%, #E7F0F1 100%)"
+    ink: "#faf5ef"
+  # "Security" (the design calls it "Products")
+  security:
+    background: "linear-gradient(180deg, #454947 0%, #939595 100%), linear-gradient(180deg, #454947 -141.07%, #FCFAF7 100%)"
+    ink: "#faf5ef"
+  # Active tab, feature icons and the slider marker: the DeOne green.
+  accent: "#0F6B76"
+  # "What's included"
+  included:
+    background: "linear-gradient(180deg, #939595 0%, #454947 81.08%)"
+    ink: "#faf5ef"
+  # Still to come from the design: details and night.
 
 hero:
   eyebrow: Suite
@@ -97,11 +122,11 @@ security:
   # A feature can have its own `image:`, shown while that feature is in focus. Without
   # one, the tab's picture is used and simply changes pose from feature to feature.
   tabs:
-    - label: Prestige Card
+    - label: Executive Card
       # STAND-IN PICTURE: cut from the design screenshot, so it is soft.
       # Replace with the real card render (transparent PNG, 2x).
       image: /suites/prestige-security-card.png
-      imageAlt: Brushed metal DeOne Prestige card standing on one corner
+      imageAlt: Brushed metal DeOne Executive card standing on one corner
       imagePlacement: { left: 811, top: 562, width: 687.56 }
       features:
         - icon: shield
@@ -131,9 +156,25 @@ security:
           title: A quieter kind of security
           description: No battery, ports or moving parts. A single tap brings your Vault within reach.
 
+    - label: Payment Bracelet
+      # PICTURE PENDING: add `image: /suites/<file>` once the bracelet render
+      # (transparent PNG, 2x) is in public/suites.
+      imageAlt: The DeOne payment bracelet
+      # PLACEHOLDER TEXT: the design for this tab has not arrived yet.
+      features:
+        - icon: card
+          title: Title to come
+          description: Description to come.
+        - icon: globe
+          title: Title to come
+          description: Description to come.
+        - icon: lock
+          title: Title to come
+          description: Description to come.
+
 included:
   eyebrow: What's included
-  headline: Prestige, in full
+  headline: Executive, in full
   subtext: Global banking, travel, wellbeing and protection, brought together for the life you lead.
 
   # Twelve cards, listed column by column: the first four are the left column,
@@ -147,7 +188,7 @@ included:
       size: square
       image: /suites/prestige-included-onchain-banking.jpg
       imageAlt: Man in a suit walking between dark glass towers
-    - label: Prestige Card
+    - label: Executive Card
       size: square
       image: /suites/prestige-included-prestige-card.jpg
       imageAlt: Hands holding a brushed metal card
@@ -211,13 +252,13 @@ included:
       - { card: 4, size: tall } # Price and Purchase Protection
     right:
       - { card: 5, size: tall } # Cloud Miner
-      - { card: 2, size: short, label: Metal Tokenized Card } # the Prestige Card picture
+      - { card: 2, size: short, label: Metal Tokenized Card } # the Executive Card picture
       - { card: 10, size: short } # Wellness
       - { card: 12, size: tall } # Cold Storage Vault
 
 details:
   headline: Full benefits
-  subtext: Explore the banking, travel, wellbeing, rewards and protection included in Prestige.
+  subtext: Explore the banking, travel, wellbeing, rewards and protection included in Executive.
 
   # Shown three to a row. `icon` is one of: card, coin, connect, travel, wellness, diamond.
   groups:
@@ -261,8 +302,8 @@ details:
 # the top, so it should match the top of the picture.
 next:
   eyebrow: Suite
-  name: Executive
-  href: /suites/executive
-  color: "#3a2d22"
-  image: /suites/executive-preview.jpg
-  imageAlt: Family talking on a sofa on a terrace at dusk
+  name: Prestige
+  href: /suites/prestige
+  color: "#524033"
+  image: /suites/prestige-hero.jpg
+  imageAlt: Executive on a phone call at his desk in a high-rise office overlooking the Manhattan skyline at dusk
