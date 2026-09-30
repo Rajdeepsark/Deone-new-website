@@ -97,15 +97,20 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       class="mx-auto flex max-w-[1032px] flex-col items-center lg:sticky lg:top-[max(16px,calc((100svh_-_830px)_/_2))] lg:origin-top lg:scale-[var(--fit,1)]"
       data-stage
     >
+      <!--
+        In the design each tab is 203px wide, with a 4px gap between tabs and 4px of padding
+        around them: 418px for two tabs, 625px for three. Phones let long labels wrap.
+      -->
       <div
-        class="flex w-full max-w-[418px] gap-1 rounded-lg bg-brand-sand p-1 text-brand-ink ring-1 ring-inset ring-brand-ink/[0.04]"
+        class="flex w-full gap-1 rounded-lg bg-brand-sand p-1 text-brand-ink ring-1 ring-inset ring-brand-ink/[0.04]"
+        style={`max-width: ${tabs.length * 207 + 4}px`}
         role="tablist"
         aria-label={headline}
       >
         {tabs.map((tab, i) => (
           <button
             type="button"
-            class="h-11 flex-1 whitespace-nowrap rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-suite-accent aria-selected:text-brand-sand"
+            class="h-11 flex-1 rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 md:whitespace-nowrap hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-suite-accent aria-selected:text-brand-sand"
             role="tab"
             id={id("tab", i)}
             aria-controls={id("panel", i)}
