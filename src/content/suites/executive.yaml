@@ -1,6 +1,6 @@
 # PLACEHOLDER CONTENT: for now this page reuses the Prestige copy and pictures. Only the
-# name, the colours below and the closing banner differ. Replace the copy and pictures
-# with the Executive ones as they arrive.
+# name, the hero picture, the colours below and the closing banner differ. Replace the
+# copy and pictures with the Executive ones as they arrive.
 name: Executive
 
 # The page's colours, section by section, as the design file gives them. `background`
@@ -30,8 +30,10 @@ theme:
 
 hero:
   eyebrow: Suite
-  image: /suites/prestige-hero.jpg
-  imageAlt: Executive on a phone call at his desk in a high-rise office overlooking the Manhattan skyline at dusk
+  image: /suites/executive-hero.jpg
+  imageAlt: Family talking on a sofa on a terrace at dusk
+  # The family sits on the right of the picture, so that is where phones look.
+  imagePosition: 80% center
 
 pictures:
   headline: |-
