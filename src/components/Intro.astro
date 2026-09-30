@@ -16,7 +16,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="relative isolate flex min-h-[900px] items-center justify-center bg-brand-cream overflow-hidden">
+<section class="relative isolate flex min-h-[560px] md:min-h-[720px] lg:min-h-[900px] items-center justify-center bg-brand-cream overflow-hidden py-16 md:py-0">
   <img
     src="/intro-pattern.svg"
     alt=""
@@ -47,9 +47,17 @@ const {
 
     <a
       href={ctaHref}
-      class="mt-10 inline-flex h-11 items-center rounded-lg border border-cta-border px-6 font-sans text-[12px] font-medium uppercase tracking-[0.13em] text-brand-ink transition hover:bg-brand-ink/5"
+      class="group mt-10 inline-flex h-11 w-[220px] items-center justify-center rounded-lg border border-cta-border transition-colors duration-300 hover:border-brand-teal"
     >
-      {ctaLabel}
+      <span class="inline-flex items-center text-brand-ink transition-colors duration-300 group-hover:text-brand-teal font-sans text-[12px] font-medium uppercase tracking-[0.13em]">
+        <span>{ctaLabel}</span>
+        <span aria-hidden="true" class="inline-flex items-center overflow-hidden max-w-0 opacity-0 transition-all duration-300 ease-out group-hover:max-w-[24px] group-hover:opacity-100 group-hover:ml-2">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <path d="M0 8.5 H6 M8 8.5 H14" stroke="currentColor" stroke-width="1" />
+            <path d="M11 4 L16 8.5 L11 13" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="square" stroke-linejoin="miter" />
+          </svg>
+        </span>
+      </span>
     </a>
   </div>
 </section>

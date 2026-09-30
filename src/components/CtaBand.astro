@@ -1,0 +1,64 @@
+---
+interface Props {
+  headline?: string;
+  headlineMobile?: string;
+  ctaLabel?: string;
+  ctaLabelMobile?: string;
+  ctaHref?: string;
+}
+
+const {
+  headline = "Start Living Better",
+  headlineMobile = "Could this be for you?",
+  ctaLabel = "Explore Membership",
+  ctaLabelMobile = "Unlock Luxury",
+  ctaHref = "#",
+} = Astro.props;
+---
+
+<section class="relative isolate bg-brand-teal overflow-hidden">
+  <!-- Water background photo -->
+  <img
+    src="/cta-water.jpg"
+    alt=""
+    aria-hidden="true"
+    class="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <!-- Teal gradient overlay: 50% at top -> 100% at bottom (matches Figma) -->
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 -z-10"
+    style="background: linear-gradient(to bottom, rgba(15,107,118,0.5), rgba(15,107,118,0.8) 48%, rgba(15,107,118,1));"
+  >
+  </div>
+
+  <div class="relative flex flex-col items-center justify-center px-6 pt-48 pb-28 md:pt-40 md:pb-40 text-center text-brand-cream">
+    <!-- Mobile headline (breaks to 2 lines) -->
+    <h2 class="md:hidden font-sans text-[24px] font-normal uppercase tracking-[0.02em] leading-[1.2] max-w-[220px]">
+      {headlineMobile}
+    </h2>
+    <!-- Desktop headline -->
+    <h2 class="hidden md:block font-sans text-[32px] font-normal uppercase tracking-[0.04em] leading-[1.2]">
+      {headline}
+    </h2>
+
+    <a
+      href={ctaHref}
+      class="group mt-10 inline-flex h-11 w-[240px] items-center justify-center rounded-lg border border-brand-cream/80 transition-colors duration-300 hover:border-brand-cream"
+    >
+      <span class="inline-flex items-center text-brand-cream/90 transition-colors duration-300 group-hover:text-brand-cream font-sans text-[12px] font-medium uppercase tracking-[0.13em]">
+        <span class="md:hidden">{ctaLabelMobile}</span>
+        <span class="hidden md:inline">{ctaLabel}</span>
+        <span aria-hidden="true" class="inline-flex items-center overflow-hidden max-w-0 opacity-0 transition-all duration-300 ease-out group-hover:max-w-[24px] group-hover:opacity-100 group-hover:ml-2">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <path d="M0 8.5 H6 M8 8.5 H14" stroke="currentColor" stroke-width="1" />
+            <path d="M11 4 L16 8.5 L11 13" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="square" stroke-linejoin="miter" />
+          </svg>
+        </span>
+      </span>
+    </a>
+  </div>
+</section>

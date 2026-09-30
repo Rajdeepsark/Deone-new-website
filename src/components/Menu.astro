@@ -1,0 +1,144 @@
+---
+const suites = [
+  { label: "Deluxe", href: "#" },
+  { label: "Prestige", href: "/suites/prestige" },
+  { label: "Executive", href: "#" },
+];
+
+const services = [
+  { label: "Banking", href: "#" },
+  { label: "Wellness", href: "#" },
+  { label: "Rewards", href: "#" },
+];
+---
+
+<!-- Full-screen menu overlay -->
+<div
+  data-menu-overlay
+  data-open="false"
+  aria-hidden="true"
+  class="group fixed inset-0 z-[60] pointer-events-none opacity-0 invisible transition-[opacity,visibility] duration-300 data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 data-[open=true]:visible"
+>
+  <!-- Teal full-screen background -->
+  <div class="absolute inset-0 bg-brand-teal"></div>
+
+  <!-- Left cream door — inner corners rounded with fixed 162px radius, full height -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute left-0 top-5 bottom-5 md:top-0 md:bottom-0 w-[18%] md:w-[533px] bg-brand-cream rounded-tr-[162px] rounded-br-[162px] -translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.7,0,0.2,1)] group-data-[open=true]:translate-x-0"
+  >
+  </div>
+
+  <!-- Right cream door — mirrored corners on the left side -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute right-0 top-5 bottom-5 md:top-0 md:bottom-0 w-[18%] md:w-[533px] bg-brand-cream rounded-tl-[162px] rounded-bl-[162px] translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.7,0,0.2,1)] group-data-[open=true]:translate-x-0"
+  >
+  </div>
+
+  <!-- Content: fades in after doors have started opening -->
+  <div class="relative flex h-full flex-col items-center justify-between px-6 pt-10 pb-16 md:pb-10 opacity-0 transition-opacity duration-500 delay-200 group-data-[open=true]:opacity-100">
+    <!-- DEONE logo top (white/cream, matching Figma 'Logo white') — clickable, goes home -->
+    <a href="/" aria-label="DeOne — home" class="text-brand-cream inline-flex hover:opacity-80 transition-opacity">
+      <svg viewBox="0 0 153 28" class="h-6 md:h-7 w-auto" fill="currentColor" aria-hidden="true">
+        <path d="M21.5144 9.36398C21.0125 8.19821 20.319 7.21283 19.434 6.40514C18.5462 5.60014 17.51 4.98629 16.3254 4.5636C15.1408 4.1436 13.8537 3.93359 12.464 3.93359H0V22.7044H12.464C13.5703 22.7044 14.6146 22.5698 15.5995 22.2978C16.5844 22.0259 17.483 21.6274 18.3006 21.1024C19.1183 20.5774 19.8198 19.9367 20.4081 19.1828C20.9963 18.429 21.4524 17.5621 21.7789 16.5794C22.1027 15.5967 22.2673 14.5117 22.2673 13.319C22.2673 11.8463 22.0163 10.5271 21.5171 9.36129L21.5144 9.36398ZM17.5235 15.5428C17.313 16.1998 17.0216 16.7732 16.6546 17.2659C16.2849 17.7559 15.8505 18.1651 15.3513 18.4882C14.8494 18.814 14.307 19.0536 13.7187 19.2124C13.1305 19.3713 12.5287 19.4494 11.9135 19.4494H5.31857C4.72492 19.4494 4.2446 18.9701 4.2446 18.3778V8.27091C4.2446 7.6786 4.72492 7.19936 5.31857 7.19936H11.9135C12.6852 7.19936 13.43 7.32321 14.1397 7.56821C14.8521 7.81321 15.4889 8.19014 16.0502 8.69898C16.6114 9.20783 17.0513 9.84591 17.367 10.6186C17.6827 11.3913 17.8419 12.2932 17.8419 13.3271C17.8419 14.1509 17.7367 14.8913 17.5262 15.5482L17.5235 15.5428Z" />
+        <path d="M33.0582 22.7068V3.93604H51.0809V7.19642H38.3741C37.7805 7.19642 37.3001 7.67565 37.3001 8.26796V11.6387H50.0285V14.7672H37.3001V18.3749C37.3001 18.9672 37.7805 19.4464 38.3741 19.4464H51.0809V22.7068H33.0582Z" />
+        <path d="M134.958 22.7068V3.93604H152.981V7.19642H140.274C139.681 7.19642 139.2 7.67565 139.2 8.26796V11.6387H151.929V14.7672H139.2V18.3749C139.2 18.9672 139.681 19.4464 140.274 19.4464H152.981V22.7068H134.958Z" />
+        <path d="M119.41 5.00783V17.6671L108.498 4.91629C107.964 4.29437 107.184 3.93359 106.363 3.93359H102.783V22.7044H105.557C106.15 22.7044 106.631 22.2251 106.631 21.6328V8.93321L117.57 21.7217C118.104 22.3463 118.884 22.7044 119.704 22.7044H123.285V3.93359H120.487C119.893 3.93359 119.413 4.41283 119.413 5.00514L119.41 5.00783Z" />
+        <path d="M90.9607 13.0198C90.9095 9.5036 89.8625 0.126295 76.4892 0.0966797C63.1185 0.126295 62.0688 9.5036 62.0176 13.0198C62.0176 13.3536 62.0176 14.6486 62.0176 14.9825C62.0688 18.4986 63.1158 27.8759 76.4892 27.9055C89.8598 27.8759 90.9095 18.4986 90.9607 14.9825C90.9607 14.8209 90.9607 13.1274 90.9607 13.0198ZM86.2331 14.6782C86.2331 17.0609 85.7663 24.3705 76.4919 24.4809C67.2174 24.3705 66.7506 17.0609 66.7506 14.6782V13.324C66.7506 10.9413 67.2174 3.63168 76.4919 3.5213C85.7663 3.63168 86.2331 10.9413 86.2331 13.324V14.6782Z" />
+      </svg>
+    </a>
+
+    <!-- Nav sections (centered) -->
+    <nav class="flex flex-col items-center gap-12 text-brand-cream">
+      <section class="flex flex-col items-center">
+        <p class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.28em]">
+          Suites
+        </p>
+        <ul class="mt-5 flex flex-col items-center gap-3">
+          {suites.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                class="font-sans text-[22px] md:text-[24px] font-normal uppercase tracking-[0.02em] transition-opacity hover:opacity-70"
+              >
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="flex flex-col items-center">
+        <p class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.28em]">
+          Services
+        </p>
+        <ul class="mt-5 flex flex-col items-center gap-3">
+          {services.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                class="font-sans text-[22px] md:text-[24px] font-normal uppercase tracking-[0.02em] transition-opacity hover:opacity-70"
+              >
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </nav>
+
+    <!-- CLOSE button — 190x44 pill, X icon on left, CLOSE text on right -->
+    <button
+      data-menu-close
+      type="button"
+      class="flex h-11 items-center justify-between md:justify-between gap-3 md:gap-16 rounded-lg border border-white/15 w-[130px] md:w-[190px] px-6 text-brand-cream text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300 hover:bg-brand-cream/10"
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path d="M1 1L11 11 M11 1L1 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" />
+      </svg>
+      <span>Close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  const overlay = document.querySelector<HTMLElement>("[data-menu-overlay]");
+  const toggles = document.querySelectorAll<HTMLElement>("[data-menu-toggle]");
+  const closeBtn = document.querySelector<HTMLElement>("[data-menu-close]");
+
+  const setOpen = (open: boolean) => {
+    if (!overlay) return;
+    overlay.setAttribute("data-open", String(open));
+    overlay.setAttribute("aria-hidden", String(!open));
+    document.documentElement.style.overflow = open ? "hidden" : "";
+  };
+
+  toggles.forEach((btn) => btn.addEventListener("click", () => setOpen(true)));
+  closeBtn?.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+
+  // Hide the floating menu button when the footer comes into view
+  const footer = document.querySelector<HTMLElement>("footer");
+  if (footer && toggles.length > 0) {
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const hide = entry.isIntersecting;
+        toggles.forEach((btn) => {
+          btn.style.opacity = hide ? "0" : "";
+          btn.style.pointerEvents = hide ? "none" : "";
+          btn.style.transform = hide
+            ? "translate(-50%, -50%) translateY(20px)"
+            : "";
+        });
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(footer);
+    toggles.forEach((btn) => {
+      btn.style.transition = "opacity 300ms ease, transform 300ms ease";
+    });
+  }
+</script>

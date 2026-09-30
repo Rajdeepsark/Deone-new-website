@@ -1,0 +1,172 @@
+---
+type IconKind = "wellness" | "travel" | "key" | "event" | "diamond" | "location" | "concierge";
+
+interface Card {
+  id: string;
+  label: string;
+  tagline: string;
+  icon: IconKind;
+  image: string;
+  imageAlt: string;
+}
+
+const cards: Card[] = [
+  { id: "better-living",       label: "Better Living",       tagline: "The art of living well.",              icon: "wellness",  image: "/life-1-better-living.jpg",         imageAlt: "Better living" },
+  { id: "privileged-travels",  label: "Privileged Travels",  tagline: "The journey, beautifully considered.", icon: "travel",    image: "/life-2-privileged-travels.jpg",   imageAlt: "Privileged travels" },
+  { id: "exceptional-stays",   label: "Exceptional Stays",   tagline: "A welcome worth remembering.",         icon: "key",       image: "/life-3-exceptional-stays.jpg",    imageAlt: "Exceptional stays" },
+  { id: "curated-experiences", label: "Curated Experiences", tagline: "An invitation to the unexpected.",     icon: "event",     image: "/life-4-curated-experiences.jpg",  imageAlt: "Curated experiences" },
+  { id: "protected-wealth",    label: "Protected Wealth",    tagline: "Built for what lasts.",                icon: "diamond",   image: "/life-5-protected-wealth.jpg",     imageAlt: "Protected wealth" },
+  { id: "worldwide-insurance", label: "Worldwide Insurance", tagline: "Peace of mind travels well.",          icon: "location",  image: "/life-6-worldwide-insurance.jpg",  imageAlt: "Worldwide insurance" },
+  { id: "personal-concierge",  label: "Personal Concierge",  tagline: "Consider it taken care of.",           icon: "concierge", image: "/life-7-personal-concierge.jpg",   imageAlt: "Personal concierge" },
+];
+
+const cornerFor = (i: number, last: number) => {
+  if (i === 0)     return "rounded-tr-[24px]";
+  if (i === last)  return "rounded-tl-[24px]";
+  return "rounded-t-[24px]";
+};
+---
+
+<section class="relative bg-brand-cream py-24 md:py-32">
+  <!-- Header block -->
+  <div class="mx-auto flex max-w-[822px] flex-col items-center px-6 text-center">
+    <p class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em] text-brand-ink">
+      Life with DeOne
+    </p>
+
+    <h2 class="mt-4 font-sans text-[32px] md:text-[42px] font-normal uppercase tracking-[0.02em] leading-[1.15] text-brand-teal">
+      Welcome to what matters
+    </h2>
+
+    <p class="mt-5 max-w-[560px] font-sans text-[16px] md:text-[18px] font-normal leading-[1.7] tracking-[0.01em] text-brand-ink">
+      From where you go to what you hold close, every detail is considered.
+    </p>
+
+    <a
+      href="#"
+      class="group mt-10 inline-flex h-11 w-[190px] items-center justify-center rounded-lg border border-cta-border transition-colors duration-300 hover:border-brand-teal"
+    >
+      <span class="inline-flex items-center text-brand-ink transition-colors duration-300 group-hover:text-brand-teal font-sans text-[12px] font-medium uppercase tracking-[0.13em]">
+        <span>Step Inside</span>
+        <span aria-hidden="true" class="inline-flex items-center overflow-hidden max-w-0 opacity-0 transition-all duration-300 ease-out group-hover:max-w-[24px] group-hover:opacity-100 group-hover:ml-2">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <path d="M0 8.5 H6 M8 8.5 H14" stroke="currentColor" stroke-width="1" />
+            <path d="M11 4 L16 8.5 L11 13" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="square" stroke-linejoin="miter" />
+          </svg>
+        </span>
+      </span>
+    </a>
+  </div>
+
+  <!-- Swiper carousel -->
+  <div class="mt-24 md:mt-32">
+    <div data-lifestyle-swiper class="swiper !overflow-visible">
+      <div class="swiper-wrapper">
+        {cards.map((c, i) => (
+          <div class={`swiper-slide !w-[300px] md:!w-[360px] lg:!w-[416px]`}>
+            <article class={`group relative aspect-[416/546] overflow-hidden ${cornerFor(i, cards.length - 1)}`}>
+              <img
+                src={c.image}
+                alt={c.imageAlt}
+                class="pointer-events-none absolute inset-0 h-full w-full object-cover object-center select-none"
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+              <div aria-hidden="true" class="absolute inset-0 bg-scrim/[0.15]"></div>
+
+              <!-- Hover overlay: dark scrim + centered tagline -->
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-0 bg-overlay-dark/85 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+              >
+              </div>
+              <p
+                class="pointer-events-none absolute inset-x-6 top-1/2 -translate-y-1/2 text-center font-sans text-[16px] md:text-[18px] font-normal leading-[1.5] text-brand-cream opacity-0 translate-y-[-40%] transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-[-50%]"
+              >
+                {c.tagline}
+              </p>
+
+              <!-- Label chip -->
+              <div class="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 md:gap-2 rounded-lg bg-overlay-dark/90 backdrop-blur-sm px-2.5 py-2 md:px-4 md:py-2.5 text-brand-cream max-w-[calc(100%-1rem)]">
+                <img
+                  src={`/icons/${c.icon}.svg`}
+                  alt=""
+                  aria-hidden="true"
+                  class="h-4 w-4 md:h-[18px] md:w-[18px] shrink-0"
+                  draggable="false"
+                />
+                <span class="font-sans text-[13px] md:text-[16px] font-normal leading-none whitespace-nowrap">{c.label}</span>
+              </div>
+            </article>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress line: same 1032 column as the header -->
+  <div class="mx-auto mt-[120px] w-full max-w-[1032px] px-6">
+    <div class="h-px w-full bg-brand-teal/20">
+      <div data-life-progress class="h-full bg-brand-teal" style="width: 0%;"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import Swiper from "swiper";
+  import { FreeMode, Mousewheel } from "swiper/modules";
+  import "swiper/css";
+  import "swiper/css/free-mode";
+
+  const containerEl = document.querySelector<HTMLElement>("[data-lifestyle-swiper]");
+  const progressEl = document.querySelector<HTMLElement>("[data-life-progress]");
+
+  if (containerEl) {
+    // Compute left/right padding to match the 1032 content column
+    const computeOffset = () => Math.max(24, (window.innerWidth - 1032) / 2);
+
+    const swiper = new Swiper(containerEl, {
+      modules: [FreeMode, Mousewheel],
+      slidesPerView: "auto",
+      spaceBetween: 24,
+      freeMode: {
+        enabled: true,
+        sticky: false,
+        momentum: true,
+        momentumBounce: false,
+        momentumRatio: 0.6,
+      },
+      grabCursor: true,
+      slidesOffsetBefore: computeOffset(),
+      slidesOffsetAfter: computeOffset(),
+      mousewheel: {
+        forceToAxis: true,
+        sensitivity: 1,
+      },
+      resistance: true,
+      resistanceRatio: 0.5,
+      on: {
+        progress(_s: any, progress: number) {
+          if (progressEl) progressEl.style.width = `${Math.max(0, Math.min(1, progress)) * 100}%`;
+        },
+      },
+    });
+
+    window.addEventListener("resize", () => {
+      const offset = computeOffset();
+      swiper.params.slidesOffsetBefore = offset;
+      swiper.params.slidesOffsetAfter = offset;
+      swiper.update();
+    });
+  }
+</script>
+
+<style>
+  :global(.swiper) {
+    width: 100%;
+  }
+  :global(.swiper-slide) {
+    height: auto;
+  }
+</style>

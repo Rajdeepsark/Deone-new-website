@@ -16,39 +16,96 @@ const {
 } = Astro.props;
 ---
 
+<!-- Outer container is 200vh tall to give room for the pinned scroll.
+     Inner sticky wrapper stays at top:0 (h-screen) → the section stays put
+     while the user scrolls the first 100vh; during that pin, the background
+     image translates upward. After 100vh scroll, sticky unpins and the page
+     resumes normal scroll. -->
 <section
-  class="relative isolate aspect-square min-h-[100svh] w-full overflow-hidden text-brand-cream"
+  data-hero-container
+  class="relative w-full text-brand-cream"
+  style="height: 200vh;"
 >
-  <img
-    src={imageSrc}
-    alt={imageAlt}
-    class="absolute inset-0 -z-10 h-full w-full object-cover object-[center_30%]"
-    fetchpriority="high"
-    decoding="async"
-  />
-
-  <div aria-hidden="true" class="absolute inset-0 -z-10 bg-scrim/[0.32]"></div>
   <div
-    aria-hidden="true"
-    class="absolute inset-x-0 top-0 -z-10 h-[29%] bg-gradient-to-b from-scrim/20 to-transparent"
+    data-hero-viewport
+    class="sticky top-0 h-[100svh] w-full overflow-hidden isolate"
   >
+    <div
+      data-hero-bg
+      aria-hidden="true"
+      class="absolute inset-x-0 top-0 -z-10 h-[150%] bg-cover bg-no-repeat bg-[center_27%] will-change-transform"
+      style={`background-image: url('${imageSrc}');`}
+    >
+    </div>
+    <img
+      src={imageSrc}
+      alt={imageAlt}
+      class="sr-only"
+      fetchpriority="high"
+      decoding="async"
+    />
+
+    <div aria-hidden="true" class="absolute inset-0 -z-10 bg-scrim/[0.32]"></div>
+    <div
+      aria-hidden="true"
+      class="absolute inset-x-0 top-0 -z-10 h-[29%] bg-gradient-to-b from-scrim/20 to-transparent"
+    >
+    </div>
+
+    <Nav variant="light" />
+
+    <div class="absolute inset-x-0 top-[42svh] -translate-y-1/2 px-6 text-center">
+      <p
+        class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em] text-brand-cream"
+      >
+        {eyebrow}
+      </p>
+
+      <h1
+        class="mt-3 md:mt-4 mx-auto max-w-[300px] md:max-w-none font-sans text-[40px] leading-[1.1] font-light uppercase tracking-[0.05em] md:tracking-[0.01em] md:text-[clamp(52px,5vw,64px)] text-brand-cream"
+      >
+        {headline.split("\n").map((line) => (
+          <span class="block md:whitespace-nowrap">{line}</span>
+        ))}
+      </h1>
+    </div>
   </div>
 
-  <Nav variant="light" />
-
-  <div class="absolute inset-x-0 top-[42svh] -translate-y-1/2 px-6 text-center">
-    <p
-      class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em] text-brand-cream"
-    >
-      {eyebrow}
-    </p>
-
-    <h1
-      class="mt-3 md:mt-4 mx-auto max-w-[12em] text-balance font-sans text-[clamp(28px,8.4vw,36px)] leading-[1.1] font-light uppercase tracking-[0.01em] sm:max-w-none md:text-[52px] lg:text-[64px] text-brand-cream"
-    >
-      {headline.split("\n").map((line) => (
-        <span class="sm:block sm:whitespace-nowrap">{line} </span>
-      ))}
-    </h1>
-  </div>
+  <button
+    type="button"
+    data-menu-toggle
+    aria-label="Open menu"
+    class="group fixed left-1/2 top-[92svh] z-40 flex h-11 w-[130px] md:w-[190px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-[6px] rounded-lg bg-overlay-dark/80 backdrop-blur-sm text-brand-cream transition hover:bg-overlay-dark/95"
+  >
+    <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>
+    <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>
+  </button>
 </section>
+
+<script>
+  const container = document.querySelector<HTMLElement>("[data-hero-container]");
+  const bg = document.querySelector<HTMLElement>("[data-hero-bg]");
+  if (container && bg) {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const rect = container.getBoundingClientRect();
+      const scrollable = container.offsetHeight - window.innerHeight; // = 100vh in px
+      if (scrollable <= 0) return;
+      const scrolled = Math.max(0, Math.min(scrollable, -rect.top));
+      const progress = scrolled / scrollable; // 0 → 1 during the pin
+      // Image is 150% tall — it can translate up by 50% of viewport height
+      // through the pin. Progress 0 = image at top position, progress 1 = image
+      // scrolled through its extra 50vh.
+      const translate = progress * (window.innerHeight * 0.5);
+      bg.style.transform = `translate3d(0, -${translate}px, 0)`;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+</script>

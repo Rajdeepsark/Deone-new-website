@@ -1,0 +1,130 @@
+---
+interface Suite {
+  id: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  ctaLabel: string;
+  ctaHref: string;
+  image: string;
+  imageAlt: string;
+  /** Object-position on mobile (x y). Landscape source images crop heavily on portrait mobile viewports. */
+  mobileObjectPosition?: string;
+}
+
+const suites: Suite[] = [
+  {
+    id: "executive",
+    eyebrow: "Suite",
+    title: "Executive",
+    body: "For those ready to make more of what they have built.",
+    ctaLabel: "Discover",
+    ctaHref: "#",
+    image: "/suite-executive-b.jpg",
+    imageAlt: "Executive lifestyle scene",
+    mobileObjectPosition: "60% center",
+  },
+  {
+    id: "prestige",
+    eyebrow: "Suite",
+    title: "Prestige",
+    body: "Total access to wellness benefits, adapting to what your life requires that day.",
+    ctaLabel: "Discover",
+    ctaHref: "/suites/prestige",
+    image: "/suite-prestige-office.jpg",
+    imageAlt: "Office scene overlooking the skyline",
+    mobileObjectPosition: "60% center",
+  },
+  {
+    id: "deluxe",
+    eyebrow: "Suite",
+    title: "Deluxe",
+    body: "Where a more rewarding way of living begins.",
+    ctaLabel: "Discover",
+    ctaHref: "#",
+    image: "/suite-prestige.jpg",
+    imageAlt: "Deluxe lifestyle scene",
+    mobileObjectPosition: "35% center",
+  },
+];
+---
+
+<section data-suites-scroll class="relative" style={`height: ${suites.length * 100}vh;`}>
+  <div class="sticky top-0 h-screen overflow-hidden">
+    {suites.map((s, i) => (
+      <div
+        data-suite-index={i}
+        data-active={i === 0 ? "true" : "false"}
+        class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-700 ease-out data-[active=true]:opacity-100 data-[active=true]:pointer-events-auto"
+      >
+        <img
+          src={s.image}
+          alt={s.imageAlt}
+          class="absolute inset-0 h-full w-full object-cover md:!object-center"
+          style={s.mobileObjectPosition ? `object-position: ${s.mobileObjectPosition};` : "object-position: center;"}
+          loading={i === 0 ? "eager" : "lazy"}
+          decoding="async"
+        />
+        <div aria-hidden="true" class="absolute inset-0 bg-scrim/40"></div>
+
+        <div class="relative flex h-full items-center justify-center px-6 text-center text-brand-cream">
+          <div class="max-w-[860px]">
+            <p class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.08em]">
+              {s.eyebrow}
+            </p>
+
+            <h2
+              class="mt-4 font-sans font-light uppercase leading-[1]"
+              style="font-size: clamp(56px, 12vw, 120px); letter-spacing: 0.03em;"
+            >
+              {s.title}
+            </h2>
+
+            <p class="mx-auto mt-8 max-w-[480px] font-sans text-[16px] md:text-[18px] font-normal leading-[1.5] tracking-[0.01em]">
+              {s.body}
+            </p>
+
+            <a
+              href={s.ctaHref}
+              class="mt-8 inline-flex items-center font-sans text-[12px] font-medium uppercase tracking-[0.13em] border-b border-brand-cream/70 pb-1 hover:opacity-80"
+            >
+              {s.ctaLabel}
+            </a>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const sec = document.querySelector<HTMLElement>("[data-suites-scroll]");
+  if (sec) {
+    const panels = Array.from(sec.querySelectorAll<HTMLElement>("[data-suite-index]"));
+    const total = panels.length;
+
+    const update = () => {
+      const rect = sec.getBoundingClientRect();
+      const scrollable = sec.offsetHeight - window.innerHeight;
+      const scrolled = Math.max(0, -rect.top);
+      const progress = scrollable > 0 ? Math.min(1, scrolled / scrollable) : 0;
+      // Split progress into N zones; active = floor(progress * N), clamped
+      const active = Math.min(total - 1, Math.floor(progress * total));
+      panels.forEach((p, i) => p.setAttribute("data-active", String(i === active)));
+    };
+
+    let rafPending = false;
+    const onScroll = () => {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(() => {
+        update();
+        rafPending = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    update();
+  }
+</script>

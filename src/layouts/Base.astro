@@ -1,6 +1,5 @@
 ---
 import "../styles/global.css";
-import MenuButton from "../components/MenuButton.astro";
 
 interface Props {
   title?: string;
@@ -8,7 +7,7 @@ interface Props {
 }
 
 const {
-  title = "DeOne — Designed for life at a higher standard",
+  title = "DeOne",
   description = "Crafted global banking, a members-only experience made to do more for you.",
 } = Astro.props;
 ---
@@ -32,8 +31,5 @@ const {
   </head>
   <body>
     <slot />
-
-    <!-- Lives outside the page sections so none of them can stack on top of it. -->
-    <MenuButton />
   </body>
 </html>

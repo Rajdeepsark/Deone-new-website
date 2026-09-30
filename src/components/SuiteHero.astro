@@ -11,38 +11,84 @@ interface Props {
 const { eyebrow = "Suite", name, imageSrc, imageAlt } = Astro.props;
 ---
 
-<section class="relative isolate w-full bg-brand-teal-night pt-24 text-brand-cream">
-  <Nav variant="light" />
-
-  <!--
-    On phones the picture is as tall as the screen, as in the 402 x 874 design. The phone
-    design is also lighter than the desktop export the picture was made from, by 1.19.
-  -->
+<!--
+  Parallax like the homepage: outer container is 200vh (100vh of scroll while pinned),
+  inner sticky wrapper is 100svh. Above the image sits the original "top bar" area
+  (teal-night background reserved for the nav via pt-24), and the image begins below
+  it with the rounded top-right corner intact.
+-->
+<section
+  data-suite-hero-container
+  class="relative isolate w-full text-brand-cream"
+  style="height: 200vh;"
+>
   <div
-    class="relative aspect-square min-h-[100svh] w-full overflow-hidden rounded-tr-[32px] md:min-h-[calc(100svh-6rem)] md:rounded-tr-[60px]"
+    class="sticky top-0 h-[100svh] w-full overflow-hidden isolate bg-brand-teal-night"
   >
+    <!-- Image area starts below the nav bar (72px mobile / 96px desktop), rounded top-right corner preserved -->
+    <div
+      class="absolute inset-x-0 top-[72px] md:top-24 bottom-0 overflow-hidden rounded-tr-[32px] md:rounded-tr-[60px]"
+    >
+      <div
+        data-suite-hero-bg
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 h-[calc(100%+50svh)] bg-cover bg-no-repeat bg-[29.6%_center] md:bg-center will-change-transform brightness-[1.19] md:brightness-100"
+        style={`background-image: url('${imageSrc}');`}
+      >
+      </div>
+    </div>
+
     <img
       src={imageSrc}
       alt={imageAlt}
-      class="absolute inset-0 h-full w-full object-cover object-[29.6%_center] brightness-[1.19] md:object-center md:brightness-100"
+      class="sr-only"
       fetchpriority="high"
       decoding="async"
     />
-  </div>
 
-  <div
-    class="absolute inset-x-0 top-[calc(6rem_+_40.8svh)] -translate-y-1/2 px-6 text-center md:top-[48svh]"
-  >
-    <p
-      class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em] text-brand-cream"
-    >
-      {eyebrow}
-    </p>
+    <!-- Nav rides on top of the whole hero -->
+    <Nav variant="light" />
 
-    <h1
-      class="mt-4 font-sans text-[40px] leading-[1.1] font-light uppercase tracking-[0.05em] text-brand-cream md:mt-2 md:tracking-[0.03em] md:text-[80px] lg:text-[96px] xl:text-[120px]"
+    <!-- Text overlay: same positioning as the original SuiteHero -->
+    <div
+      class="absolute inset-x-0 top-[calc(6rem_+_40.8svh)] -translate-y-1/2 px-6 text-center md:top-[48svh]"
     >
-      {name}
-    </h1>
+      <p
+        class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em] text-brand-cream"
+      >
+        {eyebrow}
+      </p>
+
+      <h1
+        class="mt-4 font-sans text-[40px] leading-[1.1] font-light uppercase tracking-[0.05em] text-brand-cream md:mt-2 md:tracking-[0.03em] md:text-[clamp(80px,8vw,120px)]"
+      >
+        {name}
+      </h1>
+    </div>
   </div>
 </section>
+
+<script>
+  const container = document.querySelector<HTMLElement>("[data-suite-hero-container]");
+  const bg = document.querySelector<HTMLElement>("[data-suite-hero-bg]");
+  if (container && bg) {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const rect = container.getBoundingClientRect();
+      const scrollable = container.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      const scrolled = Math.max(0, Math.min(scrollable, -rect.top));
+      const progress = scrolled / scrollable;
+      const translate = progress * (window.innerHeight * 0.5);
+      bg.style.transform = `translate3d(0, -${translate}px, 0)`;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+</script>

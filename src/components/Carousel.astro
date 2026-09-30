@@ -1,0 +1,130 @@
+---
+interface Tab {
+  id: string;
+  label: string;
+  icon: string;
+  numeral: string;
+  heading: string;
+  body: string;
+  image: string;
+  imageAlt: string;
+  imageScale?: number;
+}
+
+const tabs: Tab[] = [
+  {
+    id: "personal-banking",
+    label: "Personal Banking",
+    icon: "/icons/coin.svg",
+    numeral: "I",
+    heading: "Behind closed doors",
+    body: "Bespoke personal banking for those who lead global lives.",
+    image: "/tab-personal.jpg",
+    imageAlt: "A man sitting on the edge of a sailing yacht at sea",
+  },
+  {
+    id: "wellness",
+    label: "Wellness",
+    icon: "/icons/wellness.svg",
+    numeral: "II",
+    heading: "The finest things in life",
+    body: "Access curated travel, lifestyle and wellness experiences.",
+    image: "/tab-wellness.jpg",
+    imageAlt: "A rider on a camel crossing a desert dune",
+  },
+  {
+    id: "rewards",
+    label: "Rewards",
+    icon: "/icons/diamond.svg",
+    numeral: "III",
+    heading: "Continuous rewards",
+    body: "Rewards that continue to grow as you move and spend.",
+    image: "/tab-rewards.jpg",
+    imageAlt: "A couple walking on a sunlit palm-lined street",
+    imageScale: 1.05,
+  },
+];
+---
+
+<section
+  data-carousel
+  class="relative bg-brand-cream py-16 md:py-24"
+>
+  <div class="mx-auto w-full max-w-[1032px] px-6">
+    <!-- segmented-control tabs: light outer container, active tab = teal filled pill inside -->
+    <div class="mx-auto grid w-fit grid-cols-3 gap-1 rounded-lg bg-tab-inactive p-1">
+      {tabs.map((t) => (
+        <button
+          type="button"
+          data-tab={t.id}
+          aria-label={t.label}
+          class="flex h-10 cursor-pointer items-center justify-center rounded-md bg-transparent px-4 md:px-6 font-sans text-[12px] font-medium uppercase tracking-[0.13em] text-brand-ink transition-colors data-[active=false]:hover:bg-brand-cream data-[active=true]:cursor-default data-[active=true]:bg-brand-teal data-[active=true]:text-brand-cream text-center leading-tight"
+        >
+          <!-- Icon-only on mobile — masked so it takes the button's text color -->
+          <span
+            aria-hidden="true"
+            class="h-5 w-5 md:hidden bg-current"
+            style={`mask: url(${t.icon}) center/contain no-repeat; -webkit-mask: url(${t.icon}) center/contain no-repeat;`}
+          ></span>
+          <!-- Text label on desktop -->
+          <span class="hidden md:inline">{t.label}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- content panels: stacked in a single grid cell so they can cross-fade -->
+    <div class="mt-14 md:mt-20 grid">
+      {tabs.map((t) => (
+        <div
+          data-panel={t.id}
+          class="col-start-1 row-start-1 grid gap-10 md:grid-cols-[340px_1fr] md:gap-[188px] opacity-0 pointer-events-none transition-opacity duration-500 ease-out data-[active=true]:opacity-100 data-[active=true]:pointer-events-auto"
+        >
+          <div class="flex flex-col items-center md:items-start justify-center text-center md:text-left order-2 md:order-1">
+            <p class="font-serif text-[24px] md:text-[28px] font-normal uppercase text-brand-ink leading-none">
+              {t.numeral}
+            </p>
+            <h3 class="mt-3 font-sans text-[26px] md:text-[32px] font-normal uppercase tracking-[0.04em] leading-[1.15] text-brand-teal">
+              {t.heading}
+            </h3>
+            <p class="mt-6 max-w-[340px] font-sans text-[16px] md:text-[18px] font-normal leading-[1.7] tracking-[0.01em] text-brand-ink">
+              {t.body}
+            </p>
+          </div>
+          <div
+            class="relative order-1 md:order-2 w-full overflow-hidden rounded-tr-[24px] aspect-square md:aspect-[504/660]"
+          >
+            <img
+              src={t.image}
+              alt={t.imageAlt}
+              class="absolute inset-0 block h-full w-full object-cover object-center"
+              style={t.imageScale ? `transform: scale(${t.imageScale}); transform-origin: center;` : undefined}
+              loading="lazy"
+              decoding="async"
+            />
+            <div aria-hidden="true" class="absolute inset-0 bg-scrim/[0.05]"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>("[data-carousel]");
+  roots.forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>("[data-tab]");
+    const panels = root.querySelectorAll<HTMLElement>("[data-panel]");
+    const ids = Array.from(tabs).map((t) => t.dataset.tab!);
+
+    const setActive = (id: string) => {
+      tabs.forEach((t) => t.setAttribute("data-active", String(t.dataset.tab === id)));
+      panels.forEach((p) => p.setAttribute("data-active", String(p.dataset.panel === id)));
+    };
+
+    tabs.forEach((t) => {
+      t.addEventListener("click", () => setActive(t.dataset.tab!));
+    });
+
+    setActive(ids[0]);
+  });
+</script>
