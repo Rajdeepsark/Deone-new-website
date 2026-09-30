@@ -308,8 +308,10 @@ details:
 # the top, so it should match the top of the picture.
 next:
   eyebrow: Suite
-  name: Prestige
-  href: /suites/prestige
-  color: "#524033"
-  image: /suites/prestige-hero.jpg
-  imageAlt: Executive on a phone call at his desk in a high-rise office overlooking the Manhattan skyline at dusk
+  name: Deluxe
+  href: /suites/deluxe
+  # Matches the Full benefits section above, so the two run together on phones.
+  color: "#454947"
+  # STAND-IN PICTURE: the homepage's Deluxe picture with the design's 50% scrim baked in.
+  image: /suites/deluxe-preview.jpg
+  imageAlt: Man serving a tennis ball on a hillside court overlooking the sea at sunset
