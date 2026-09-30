@@ -6,6 +6,8 @@ interface Props {
   href?: string;
   image?: string;
   imageAlt?: string;
+  /** The wall colour narrow screens fade the picture into at the top. */
+  color?: string;
 }
 
 const {
@@ -15,16 +17,18 @@ const {
   href = "#",
   image,
   imageAlt = "",
+  color = "#3a2d22",
 } = Astro.props;
 ---
 
 <!--
   The words sit in the middle at every width. Wide screens show the whole picture, as
   designed. Narrower screens can't, so there the picture sits in the lower part and fades
-  at the top into the colour of its wall, which keeps the family clear of the words.
+  at the top into `color`, the colour of its wall, which keeps the people clear of the words.
 -->
 <section
-  class="relative isolate flex aspect-[10/13] min-h-[440px] w-full items-center justify-center overflow-hidden bg-[#3a2d22] px-6 text-brand-cream sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[1512/450] lg:min-h-[360px] lg:bg-brand-teal-night"
+  class="relative isolate flex aspect-[10/13] min-h-[440px] w-full items-center justify-center overflow-hidden bg-(--wall) px-6 text-brand-cream sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[1512/450] lg:min-h-[360px] lg:bg-suite-night"
+  style={`--wall: ${color}`}
 >
   {image && (
     <img

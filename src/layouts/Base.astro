@@ -4,11 +4,14 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  /** Inline style for <body>; suite pages use it to set their palette's CSS variables. */
+  bodyStyle?: string;
 }
 
 const {
   title = "DeOne",
   description = "Crafted global banking, a members-only experience made to do more for you.",
+  bodyStyle,
 } = Astro.props;
 ---
 
@@ -29,7 +32,7 @@ const {
 
     <title>{title}</title>
   </head>
-  <body>
+  <body style={bodyStyle || undefined}>
     <slot />
   </body>
 </html>

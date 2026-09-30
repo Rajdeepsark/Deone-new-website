@@ -23,6 +23,7 @@ const { suite } = Astro.props;
 const {
   name,
   description,
+  theme,
   hero,
   pictures,
   benefits,
@@ -32,9 +33,25 @@ const {
   details,
   next,
 } = suite.data;
+
+// The suite's colours become CSS variables on <body>. Each section reads its own
+// --suite-<section>-bg and --suite-<section>-ink; whatever the YAML leaves out keeps the
+// Prestige defaults from src/styles/global.css.
+const sections = ["pictures", "benefits", "security", "included", "details"] as const;
+const cssVariables: string[] = [];
+for (const key of sections) {
+  const section = theme[key];
+  if (section?.background) cssVariables.push(`--suite-${key}-bg: ${section.background}`);
+  if (section?.ink) cssVariables.push(`--suite-${key}-ink: ${section.ink}`);
+}
+const includedPhone = theme.included?.backgroundPhone ?? theme.included?.background;
+if (includedPhone) cssVariables.push(`--suite-included-bg-phone: ${includedPhone}`);
+if (theme.accent) cssVariables.push(`--color-suite-accent: ${theme.accent}`);
+if (theme.night) cssVariables.push(`--color-suite-night: ${theme.night}`);
+const bodyStyle = cssVariables.join("; ");
 ---
 
-<Base title={`DeOne | ${name}`} description={description}>
+<Base title={`DeOne | ${name}`} description={description} bodyStyle={bodyStyle}>
   <SuiteHero
     eyebrow={hero.eyebrow}
     name={name}
@@ -73,6 +90,7 @@ const {
       name={next.name}
       ctaLabel={next.ctaLabel}
       href={next.href}
+      color={next.color}
       image={next.image}
       imageAlt={next.imageAlt}
     />

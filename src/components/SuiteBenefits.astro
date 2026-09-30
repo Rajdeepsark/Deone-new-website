@@ -24,7 +24,7 @@ const corner = (i: number) =>
 ---
 
 <section
-  class="bg-gradient-to-b from-blush to-blush-light px-4 pb-[120px] pt-[120px] text-brand-ink md:px-6 md:pb-[240px] md:pt-10"
+  class="[background:var(--suite-benefits-bg)] [--color-suite-ink:var(--suite-benefits-ink)] px-4 pb-[120px] pt-[120px] text-suite-ink md:px-6 md:pb-[240px] md:pt-10"
 >
   <div class="mx-auto max-w-[1032px]">
     <header class="text-center">
@@ -63,7 +63,7 @@ const corner = (i: number) =>
           ) : (
             <div
               class:list={[
-                "aspect-[370/484] w-full bg-brand-ink/10 md:aspect-[328/430]",
+                "aspect-[370/484] w-full bg-suite-ink/10 md:aspect-[328/430]",
                 corner(i),
               ]}
               role="img"
@@ -89,7 +89,7 @@ const corner = (i: number) =>
           <!-- The phone design has no link here. -->
           <a
             href={item.href}
-            class="border-b border-brand-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-brand-ink max-md:hidden"
+            class="border-b border-suite-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-suite-ink max-md:hidden"
           >
             {ctaLabel}
             <span class="sr-only"> about {item.title}</span>

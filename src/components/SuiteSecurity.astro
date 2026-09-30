@@ -61,7 +61,7 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
 ---
 
 <section
-  class="relative isolate overflow-x-clip bg-gradient-to-b from-blush-light to-[#f9e5db] px-6 py-24 text-brand-ink md:py-[160px]"
+  class="relative isolate overflow-x-clip [background:var(--suite-security-bg)] [--color-suite-ink:var(--suite-security-ink)] px-6 py-24 text-suite-ink md:py-[160px]"
   data-security
 >
   <header class="mx-auto max-w-[600px] text-center">
@@ -98,14 +98,14 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       data-stage
     >
       <div
-        class="flex w-full max-w-[418px] gap-1 rounded-lg bg-brand-sand p-1 ring-1 ring-inset ring-brand-ink/[0.04]"
+        class="flex w-full max-w-[418px] gap-1 rounded-lg bg-brand-sand p-1 text-brand-ink ring-1 ring-inset ring-brand-ink/[0.04]"
         role="tablist"
         aria-label={headline}
       >
         {tabs.map((tab, i) => (
           <button
             type="button"
-            class="h-11 flex-1 whitespace-nowrap rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-brand-copper aria-selected:text-brand-sand"
+            class="h-11 flex-1 whitespace-nowrap rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-suite-accent aria-selected:text-brand-sand"
             role="tab"
             id={id("tab", i)}
             aria-controls={id("panel", i)}
@@ -169,12 +169,12 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
             >
               {tab.features.map((feature, n) => (
                 <li
-                  class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-brand-cream p-6 ring-1 ring-inset ring-brand-copper/40 transition-[background-color,box-shadow] duration-[600ms] lg:bg-brand-cream/80 lg:ring-transparent lg:data-[active]:bg-brand-cream lg:data-[active]:ring-brand-copper/40"
+                  class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-brand-cream p-6 text-brand-ink ring-1 ring-inset ring-suite-accent/40 transition-[background-color,box-shadow] duration-[600ms] lg:bg-brand-cream/80 lg:ring-transparent lg:data-[active]:bg-brand-cream lg:data-[active]:ring-suite-accent/40"
                   data-feature
                   data-active={n === 0 ? "" : undefined}
                 >
                   <span
-                    class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 bg-[linear-gradient(174.31deg,#C57847_39.64%,#F3E4DA_208.39%)] text-brand-sand transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
+                    class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 bg-[linear-gradient(174.31deg,var(--color-suite-accent)_39.64%,#F3E4DA_208.39%)] text-brand-sand transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
                   >
                     <Icon name={feature.icon} stroke={1.4} />
                   </span>

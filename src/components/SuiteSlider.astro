@@ -42,7 +42,7 @@ const hasNext = slides.length > 1;
   aria-label={label}
   data-slider
 >
-  <div class="flex flex-col text-brand-ink md:flex-row md:items-end">
+  <div class="flex flex-col text-suite-ink md:flex-row md:items-end">
     <!--
       On phones the pictures stand in a row that is swiped through, the next one showing
       at the edge. A picture is never wider than 400px, and from there on the row is
@@ -100,7 +100,7 @@ const hasNext = slides.length > 1;
           class="group/next mt-[67px] hidden items-center gap-4 outline-none md:flex cursor-pointer"
           data-slide-next
         >
-          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-ink/20 transition group-hover/next:bg-brand-ink/5 group-focus-visible/next:border-brand-ink">
+          <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-suite-ink/20 transition group-hover/next:bg-suite-ink/5 group-focus-visible/next:border-suite-ink">
             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
               <path d="M0.5 5.5H6M8.5 5.5H16M11 0.5L16 5.5L11 10.5" stroke="currentColor" stroke-width="1" />
             </svg>
@@ -130,7 +130,7 @@ const hasNext = slides.length > 1;
               aria-current={i === 0 ? "true" : undefined}
               data-slide-mark
             >
-              <span class="block h-px w-4 bg-brand-ink/30 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-focus-visible/mark:bg-brand-ink group-aria-[current]/mark:w-16 group-aria-[current]/mark:bg-brand-copper motion-reduce:transition-none" />
+              <span class="block h-px w-4 bg-suite-ink/30 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-focus-visible/mark:bg-suite-ink group-aria-[current]/mark:w-16 group-aria-[current]/mark:bg-suite-accent motion-reduce:transition-none" />
             </button>
           ))}
         </div>

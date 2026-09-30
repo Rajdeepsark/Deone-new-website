@@ -10,11 +10,33 @@ const phoneCard = z.object({
   label: z.string().optional(),
 });
 
+// A CSS hex colour, e.g. #f3e4da.
+const hex = z.string().regex(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i, "a hex colour like #f3e4da");
+
+// One section of a suite page: any CSS `background` (a colour, or gradients straight from
+// the design file) and `ink`, the colour of its words and lines.
+const section = z.object({ background: z.string().optional(), ink: hex.optional() });
+
 const suites = defineCollection({
   loader: glob({ pattern: "*.yaml", base: "./src/content/suites" }),
   schema: z.object({
     name: z.string(),
     description: z.string().optional(),
+    // The suite's colours, section by section. Anything left out keeps the Prestige look,
+    // whose values are in src/styles/global.css (the --suite-* variables).
+    theme: z
+      .object({
+        pictures: section.optional(),
+        benefits: section.optional(),
+        security: section.optional(),
+        // Phones show this section on a background of its own; without `backgroundPhone`
+        // they use `background` too.
+        included: section.extend({ backgroundPhone: z.string().optional() }).optional(),
+        details: section.optional(),
+        accent: hex.optional(), // active tab, slider marker, feature icons
+        night: hex.optional(), // hero, quote and closing banner backdrops
+      })
+      .default({}),
     hero: z.object({
       eyebrow: z.string().default("Suite"),
       image: z.string(),
@@ -124,6 +146,8 @@ const suites = defineCollection({
         href: z.string().default("#"),
         image: z.string().optional(),
         imageAlt: z.string().default(""),
+        // The wall colour phones fade the picture into at the top.
+        color: hex.default("#3a2d22"),
       })
       .optional(),
   }),

@@ -20,8 +20,34 @@
   --color-cta-border: #939595;
   --color-tab-inactive: #f2e7d8;
 
+  /* Suite pages. Each suite has its own colours; these are the Prestige values and the
+     defaults. A suite's YAML overrides them under `theme:` (see src/content.config.ts),
+     which src/pages/suites/[slug].astro sets as CSS variables on <body>. */
+  --color-suite-accent: #c57847; /* active tab, slider marker, feature icons */
+  --color-suite-night: #1d3035; /* hero, quote and closing banner backdrops */
+  /* The words and lines of a suite section. Each section sets it from its own
+     --suite-<section>-ink (below the theme), so everything inside follows. */
+  --color-suite-ink: #454947;
+
   --font-sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Cormorant Infant", "Cormorant Garamond", Georgia, serif;
+}
+
+/* Suite section backgrounds and word colours, in page order: the Prestige values and the
+   defaults. A background takes anything CSS does, so a value can come straight from the
+   design file. */
+:root {
+  --suite-pictures-bg: linear-gradient(180deg, #f3e4da 0%, #fcd7c0 100%);
+  --suite-pictures-ink: #454947;
+  --suite-benefits-bg: linear-gradient(180deg, #fcd7c0 0%, #f3e4da 100%);
+  --suite-benefits-ink: #454947;
+  --suite-security-bg: linear-gradient(180deg, #f3e4da 0%, #f9e5db 100%);
+  --suite-security-ink: #454947;
+  --suite-included-bg: #f3e4da;
+  --suite-included-bg-phone: linear-gradient(180deg, #f9e5db 0%, #f2e7d8 100%);
+  --suite-included-ink: #454947;
+  --suite-details-bg: linear-gradient(180deg, #f2e7d8 0%, #f3e4da 100%);
+  --suite-details-ink: #454947;
 }
 
 html,
