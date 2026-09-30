@@ -41,6 +41,9 @@ const suites = defineCollection({
       eyebrow: z.string().default("Suite"),
       image: z.string(),
       imageAlt: z.string(),
+      // Which part of the picture phones keep in view, as a CSS background-position.
+      // Wide screens show the picture's full width.
+      imagePosition: z.string().default("29.6% center"),
     }),
     pictures: z.object({
       headline: z.string(),

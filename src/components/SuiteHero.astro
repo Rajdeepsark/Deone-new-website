@@ -6,9 +6,17 @@ interface Props {
   name: string;
   imageSrc: string;
   imageAlt: string;
+  /** Which part of the picture phones keep in view, as a CSS background-position. */
+  imagePosition?: string;
 }
 
-const { eyebrow = "Suite", name, imageSrc, imageAlt } = Astro.props;
+const {
+  eyebrow = "Suite",
+  name,
+  imageSrc,
+  imageAlt,
+  imagePosition = "29.6% center",
+} = Astro.props;
 ---
 
 <!--
@@ -32,8 +40,8 @@ const { eyebrow = "Suite", name, imageSrc, imageAlt } = Astro.props;
       <div
         data-suite-hero-bg
         aria-hidden="true"
-        class="absolute inset-x-0 top-0 h-[calc(100%+50svh)] bg-cover bg-no-repeat bg-[29.6%_center] md:bg-center will-change-transform brightness-[1.19] md:brightness-100"
-        style={`background-image: url('${imageSrc}');`}
+        class="absolute inset-x-0 top-0 h-[calc(100%+50svh)] bg-cover bg-no-repeat [background-position:var(--focus)] md:bg-center will-change-transform brightness-[1.19] md:brightness-100"
+        style={`background-image: url('${imageSrc}'); --focus: ${imagePosition};`}
       >
       </div>
     </div>
