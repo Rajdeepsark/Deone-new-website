@@ -11,22 +11,26 @@ theme:
   # "Where ambition takes you"
   pictures:
     background: "linear-gradient(180deg, #939595 0%, #454947 100%)"
-    ink: "#faf5ef"
+    ink: "#FCFAF7"
   # "A higher standard, wherever life leads"
   benefits:
     background: "linear-gradient(0deg, #454947, #454947), linear-gradient(180deg, #939595 0%, #E4E5E5 100%), linear-gradient(180deg, #9FC4C8 0%, #E7F0F1 100%)"
-    ink: "#faf5ef"
+    ink: "#FCFAF7"
   # "Security" (the design calls it "Products")
   security:
     background: "linear-gradient(180deg, #454947 0%, #939595 100%), linear-gradient(180deg, #454947 -141.07%, #FCFAF7 100%)"
-    ink: "#faf5ef"
+    ink: "#FCFAF7"
   # Active tab, feature icons and the slider marker: the DeOne green.
   accent: "#0F6B76"
   # "What's included"
   included:
     background: "linear-gradient(180deg, #939595 0%, #454947 81.08%)"
-    ink: "#faf5ef"
-  # Still to come from the design: details and night.
+    ink: "#FCFAF7"
+  # "Full benefits"
+  details:
+    background: "#454947"
+    ink: "#FCFAF7"
+  # Still to come from the design: night.
 
 hero:
   eyebrow: Suite
