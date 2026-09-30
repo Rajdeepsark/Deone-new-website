@@ -8,6 +8,8 @@ interface Props {
   imageAlt: string;
   /** Which part of the picture phones keep in view, as a CSS background-position. */
   imagePosition?: string;
+  /** Any CSS background laid over the picture, such as a scrim or tint. */
+  overlay?: string;
 }
 
 const {
@@ -16,6 +18,7 @@ const {
   imageSrc,
   imageAlt,
   imagePosition = "29.6% center",
+  overlay,
 } = Astro.props;
 ---
 
@@ -44,6 +47,8 @@ const {
         style={`background-image: url('${imageSrc}'); --focus: ${imagePosition};`}
       >
       </div>
+      <!-- Stays put while the picture moves behind it. -->
+      {overlay && <div aria-hidden="true" class="absolute inset-0" style={`background: ${overlay};`}></div>}
     </div>
 
     <img

@@ -44,6 +44,9 @@ const suites = defineCollection({
       // Which part of the picture phones keep in view, as a CSS background-position.
       // Wide screens show the picture's full width.
       imagePosition: z.string().default("29.6% center"),
+      // Any CSS background laid over the picture, such as the scrim and tint the design
+      // file gives. Leave it out for a picture that needs none.
+      overlay: z.string().optional(),
     }),
     pictures: z.object({
       headline: z.string(),
