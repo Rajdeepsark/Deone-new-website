@@ -64,25 +64,20 @@ const cornerFor = (i: number, last: number) => {
       <div class="swiper-wrapper">
         {cards.map((c, i) => (
           <div class={`swiper-slide !w-[300px] md:!w-[360px] lg:!w-[416px]`}>
-            <article class={`group relative aspect-[416/546] overflow-hidden ${cornerFor(i, cards.length - 1)}`}>
+            <article data-active="false" class={`group relative aspect-[416/546] overflow-hidden ${cornerFor(i, cards.length - 1)}`}>
               <img
                 src={c.image}
                 alt={c.imageAlt}
-                class="pointer-events-none absolute inset-0 h-full w-full object-cover object-center select-none"
+                class="pointer-events-none absolute inset-0 h-full w-full object-cover object-center scale-105 select-none blur-0 transition-[filter] duration-[850ms] ease-in-out group-hover:blur-[8px] group-data-[active=true]:blur-[8px]"
                 loading="lazy"
                 decoding="async"
                 draggable="false"
               />
               <div aria-hidden="true" class="absolute inset-0 bg-scrim/[0.15]"></div>
 
-              <!-- Hover overlay: dark scrim + centered tagline -->
-              <div
-                aria-hidden="true"
-                class="pointer-events-none absolute inset-0 bg-overlay-dark/85 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
-              >
-              </div>
+              <!-- Hover-revealed tagline, centered on the card -->
               <p
-                class="pointer-events-none absolute inset-x-6 top-1/2 -translate-y-1/2 text-center font-sans text-[16px] md:text-[18px] font-normal leading-[1.5] text-brand-cream opacity-0 translate-y-[-40%] transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-[-50%]"
+                class="pointer-events-none absolute inset-x-6 top-1/2 -translate-y-1/2 text-center font-sans text-[16px] md:text-[18px] font-normal leading-[1.5] text-brand-cream opacity-0 transition-opacity duration-[850ms] ease-in-out group-hover:opacity-100 group-data-[active=true]:opacity-100"
               >
                 {c.tagline}
               </p>
@@ -159,6 +154,26 @@ const cornerFor = (i: number, last: number) => {
       swiper.params.slidesOffsetAfter = offset;
       swiper.update();
     });
+
+    // Touch-tap toggle on mobile: tapping a card activates its blur+tagline;
+    // tapping another card (or outside) deactivates the previous one.
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    if (isTouch) {
+      const cards = Array.from(
+        containerEl.querySelectorAll<HTMLElement>("article[data-active]")
+      );
+      cards.forEach((card) => {
+        card.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const wasActive = card.dataset.active === "true";
+          cards.forEach((c) => (c.dataset.active = "false"));
+          card.dataset.active = wasActive ? "false" : "true";
+        });
+      });
+      document.addEventListener("click", () => {
+        cards.forEach((c) => (c.dataset.active = "false"));
+      });
+    }
   }
 </script>
 

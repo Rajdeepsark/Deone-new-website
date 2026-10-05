@@ -17,7 +17,7 @@ const services = [
   data-menu-overlay
   data-open="false"
   aria-hidden="true"
-  class="group fixed inset-0 z-[60] pointer-events-none opacity-0 invisible transition-[opacity,visibility] duration-300 data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 data-[open=true]:visible"
+  class="group fixed inset-0 z-[60] pointer-events-none opacity-0 invisible transition-[opacity,visibility] duration-700 data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 data-[open=true]:visible"
 >
   <!-- Teal full-screen background -->
   <div class="absolute inset-0 bg-brand-teal"></div>
@@ -37,9 +37,9 @@ const services = [
   </div>
 
   <!-- Content: fades in after doors have started opening -->
-  <div class="relative flex h-full flex-col items-center justify-between px-6 pt-10 pb-16 md:pb-10 opacity-0 transition-opacity duration-500 delay-200 group-data-[open=true]:opacity-100">
+  <div class="relative h-full px-6 opacity-0 transition-opacity duration-500 delay-200 group-data-[open=true]:opacity-100">
     <!-- DEONE logo top (white/cream, matching Figma 'Logo white') — clickable, goes home -->
-    <a href="/" aria-label="DeOne — home" class="text-brand-cream inline-flex hover:opacity-80 transition-opacity">
+    <a href="/" aria-label="DeOne — home" class="absolute left-1/2 top-16 md:top-14 -translate-x-1/2 text-brand-cream inline-flex hover:opacity-80 transition-opacity">
       <svg viewBox="0 0 153 28" class="h-6 md:h-7 w-auto" fill="currentColor" aria-hidden="true">
         <path d="M21.5144 9.36398C21.0125 8.19821 20.319 7.21283 19.434 6.40514C18.5462 5.60014 17.51 4.98629 16.3254 4.5636C15.1408 4.1436 13.8537 3.93359 12.464 3.93359H0V22.7044H12.464C13.5703 22.7044 14.6146 22.5698 15.5995 22.2978C16.5844 22.0259 17.483 21.6274 18.3006 21.1024C19.1183 20.5774 19.8198 19.9367 20.4081 19.1828C20.9963 18.429 21.4524 17.5621 21.7789 16.5794C22.1027 15.5967 22.2673 14.5117 22.2673 13.319C22.2673 11.8463 22.0163 10.5271 21.5171 9.36129L21.5144 9.36398ZM17.5235 15.5428C17.313 16.1998 17.0216 16.7732 16.6546 17.2659C16.2849 17.7559 15.8505 18.1651 15.3513 18.4882C14.8494 18.814 14.307 19.0536 13.7187 19.2124C13.1305 19.3713 12.5287 19.4494 11.9135 19.4494H5.31857C4.72492 19.4494 4.2446 18.9701 4.2446 18.3778V8.27091C4.2446 7.6786 4.72492 7.19936 5.31857 7.19936H11.9135C12.6852 7.19936 13.43 7.32321 14.1397 7.56821C14.8521 7.81321 15.4889 8.19014 16.0502 8.69898C16.6114 9.20783 17.0513 9.84591 17.367 10.6186C17.6827 11.3913 17.8419 12.2932 17.8419 13.3271C17.8419 14.1509 17.7367 14.8913 17.5262 15.5482L17.5235 15.5428Z" />
         <path d="M33.0582 22.7068V3.93604H51.0809V7.19642H38.3741C37.7805 7.19642 37.3001 7.67565 37.3001 8.26796V11.6387H50.0285V14.7672H37.3001V18.3749C37.3001 18.9672 37.7805 19.4464 38.3741 19.4464H51.0809V22.7068H33.0582Z" />
@@ -49,8 +49,8 @@ const services = [
       </svg>
     </a>
 
-    <!-- Nav sections (centered) -->
-    <nav class="flex flex-col items-center gap-12 text-brand-cream">
+    <!-- Nav sections (centered in viewport) -->
+    <nav class="absolute inset-0 flex flex-col items-center justify-center gap-12 text-brand-cream">
       <section class="flex flex-col items-center">
         <p class="font-serif text-[16px] md:text-[18px] font-medium uppercase tracking-[0.28em]">
           Suites
@@ -88,18 +88,20 @@ const services = [
       </section>
     </nav>
 
-    <!-- CLOSE button — 190x44 pill, X icon on left, CLOSE text on right -->
-    <button
-      data-menu-close
-      type="button"
-      class="flex h-11 items-center justify-between md:justify-between gap-3 md:gap-16 rounded-lg border border-white/15 w-[130px] md:w-[190px] px-6 text-brand-cream text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300 hover:bg-brand-cream/10"
-    >
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-        <path d="M1 1L11 11 M11 1L1 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" />
-      </svg>
-      <span>Close</span>
-    </button>
   </div>
+
+  <!-- CLOSE button — pinned to the SAME location as the menu-open button (top-[92svh], centered),
+       so when the menu opens the button appears to transform in place -->
+  <button
+    data-menu-close
+    type="button"
+    class="fixed left-1/2 top-[92svh] z-[70] -translate-x-1/2 -translate-y-1/2 flex h-11 items-center justify-between gap-3 md:gap-16 rounded-lg border border-white/15 w-[130px] md:w-[190px] px-6 text-brand-cream text-[12px] font-medium uppercase tracking-[0.13em] cursor-pointer opacity-0 pointer-events-none transition-opacity duration-500 delay-200 group-data-[open=true]:opacity-100 group-data-[open=true]:pointer-events-auto hover:bg-brand-cream/10"
+  >
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M1 1L11 11 M11 1L1 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" />
+    </svg>
+    <span>Close</span>
+  </button>
 </div>
 
 <script>
