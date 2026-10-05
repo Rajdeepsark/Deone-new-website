@@ -75,6 +75,13 @@ const suites = defineCollection({
           }),
         )
         .length(4),
+      // How the four pictures move with the scroll.
+      //   rise     - they rise ahead of the page and sharpen as it scrolls to them
+      //   approach - they come forward through 3D space from far behind the page, one
+      //              after another, each starting deep, turned, faint and soft
+      //   collage  - the gallery pins to the screen for a stretch of scrolling while the
+      //              pictures rearrange into a second composition around the headline
+      motion: z.enum(["rise", "approach", "collage"]).default("rise"),
       slides: z
         .array(
           z.object({

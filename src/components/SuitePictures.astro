@@ -17,10 +17,17 @@ interface Props {
   headline: string;
   subtext: string;
   gallery: Picture[];
+  /**
+   * How the four pictures move with the scroll: `rise` ahead of the page and sharpen,
+   * `approach` from far behind the page one after another, or rearrange into a second
+   * `collage` while the gallery is pinned to the screen.
+   */
+  motion?: "rise" | "approach" | "collage";
   slides: Slide[];
 }
 
-const { headline, subtext, gallery, slides } = Astro.props;
+const { headline, subtext, gallery, motion = "rise", slides } = Astro.props;
+const collage = motion === "collage";
 
 // Each gallery picture, in gallery order: where it floats around the headline, and how
 // it behaves while scrolling. All values are px at the design width.
@@ -64,47 +71,87 @@ const slots = [
     opacity: 0.6,
   },
 ];
+
+// How a picture follows the scroll, by `motion`.
+const follows = {
+  rise: "will-change-[filter,translate] [transition:translate_450ms_cubic-bezier(0.2,0.8,0.2,1),filter_450ms_cubic-bezier(0.2,0.8,0.2,1)]",
+  approach:
+    "will-change-[filter,transform,opacity] [transition:filter_450ms_cubic-bezier(0.2,0.8,0.2,1),transform_450ms_cubic-bezier(0.2,0.8,0.2,1),opacity_450ms_cubic-bezier(0.2,0.8,0.2,1)]",
+  // The script moves these itself, frame by frame.
+  collage: "",
+};
 ---
 
 <section
   class="[background:var(--suite-pictures-bg)] [--color-suite-ink:var(--suite-pictures-ink)] pb-24 pt-[62px] text-suite-ink md:pb-[240px] md:pt-[155px]"
 >
   <div class="md:px-6">
-    <div
-      class="@container relative mx-auto aspect-[402/729.5] w-full max-w-[480px] md:aspect-[856/894] md:max-w-[856px]"
-      data-gallery
-    >
-      {gallery.slice(0, slots.length).map((picture, i) => (
-        <img
-          src={picture.image}
-          alt={picture.alt}
-          class:list={[
-            "absolute aspect-[240/313] rounded-tr-[12px] object-cover will-change-[filter,translate] [filter:blur(var(--blur))] [transition:translate_450ms_cubic-bezier(0.2,0.8,0.2,1),filter_450ms_cubic-bezier(0.2,0.8,0.2,1)] [translate:0_var(--shift,0px)] motion-reduce:transition-none md:rounded-tr-[24px]",
-            slots[i].phone,
-            slots[i].wide,
-          ]}
-          style={`--blur:${slots[i].soft}px; opacity:${slots[i].opacity};`}
-          loading="lazy"
-          decoding="async"
-          data-float
-          data-blur={slots[i].blur}
-          data-soft={slots[i].soft}
-          data-rise={slots[i].rise}
-        />
-      ))}
-
-      <h2
-        class="absolute inset-x-0 top-[39.3%] text-center font-sans text-[clamp(28px,9.95cqw,48px)] leading-[1.1] font-light uppercase tracking-[0.05em] md:top-[22.93%] md:text-[clamp(32px,7.48cqw,64px)] md:leading-[1.094] md:tracking-[0.01em]"
+    <!--
+      For a collage this block is taller than the screen. The extra 175svh is the distance
+      the page scrolls while the stage inside stays pinned, a screen tall, and the pictures
+      rearrange. The gallery then never grows taller than the screen. The other motions
+      leave both wrappers plain.
+    -->
+    <div class:list={[collage && "h-[275svh] motion-reduce:h-auto"]} data-pin={collage ? "" : undefined}>
+      <div
+        class:list={[
+          collage && "sticky top-0 flex h-svh items-center motion-reduce:static motion-reduce:h-auto",
+        ]}
       >
-        {headline.split("\n").map((line) => (
-          <span class="block whitespace-nowrap">{line}</span>
-        ))}
-      </h2>
+        <div
+          class:list={[
+            "@container relative mx-auto aspect-[402/729.5] w-full md:aspect-[856/894]",
+            collage
+              ? "max-w-[min(480px,calc((100svh_-_48px)_*_402_/_729.5))] md:max-w-[min(856px,calc((100svh_-_64px)_*_856_/_894))]"
+              : "max-w-[480px] md:max-w-[856px]",
+          ]}
+          data-gallery
+          data-motion={motion}
+        >
+          {gallery.slice(0, slots.length).map((picture, i) => (
+            <img
+              src={picture.image}
+              alt={picture.alt}
+              class:list={[
+                "absolute aspect-[240/313] rounded-tr-[12px] object-cover [filter:blur(var(--blur))] [translate:0_var(--shift,0px)] motion-reduce:transition-none md:rounded-tr-[24px]",
+                follows[motion],
+                slots[i].phone,
+                slots[i].wide,
+              ]}
+              style={`--blur:${collage ? 0 : slots[i].soft}px; opacity:${slots[i].opacity};`}
+              loading="lazy"
+              decoding="async"
+              data-float
+              data-blur={slots[i].blur}
+              data-soft={slots[i].soft}
+              data-rise={slots[i].rise}
+              data-opacity={slots[i].opacity}
+            />
+          ))}
+
+          <h2
+            class="absolute inset-x-0 top-[39.3%] text-center font-sans text-[clamp(28px,9.95cqw,48px)] leading-[1.1] font-light uppercase tracking-[0.05em] md:top-[22.93%] md:text-[clamp(32px,7.48cqw,64px)] md:leading-[1.094] md:tracking-[0.01em]"
+          >
+            {headline.split("\n").map((line) => (
+              <span class="block whitespace-nowrap">{line}</span>
+            ))}
+          </h2>
+        </div>
+      </div>
     </div>
 
-    <!-- On phones the text runs on and wraps by itself; wide screens keep the set lines. -->
+    <!--
+      On phones the text runs on and wraps by itself; wide screens keep the set lines.
+      A collage ends with its pictures drawn in from the foot of the gallery, which leaves
+      the room this line otherwise keeps above itself.
+    -->
     <p
-      class="mx-auto mt-[178px] max-w-[300px] text-center font-sans text-[18px] leading-[22px] font-normal uppercase tracking-[0.06em] md:mt-[191px] md:max-w-[856px] md:text-[24px] md:leading-[1.2] md:tracking-[0.03em]"
+      class:list={[
+        "mx-auto max-w-[300px] text-center font-sans text-[18px] leading-[22px] font-normal uppercase tracking-[0.06em] md:max-w-[856px] md:text-[24px] md:leading-[1.2] md:tracking-[0.03em]",
+        collage
+          ? "mt-0 motion-reduce:mt-[178px] md:motion-reduce:mt-[191px]"
+          : "mt-[178px] md:mt-[191px]",
+      ]}
     >
       {subtext.split("\n").map((line) => (
         <span class="md:block">{line} </span>
@@ -118,18 +165,167 @@ const slots = [
 </section>
 
 <script>
-  // Depth of field while scrolling. With the gallery in the middle of the screen the
-  // pictures sit exactly as designed. Scrolling down, all of them rise ahead of the page
-  // and fall out of focus; scrolling back up, they sink and sharpen again.
+  // `rise`, the usual motion: depth of field while scrolling. With the gallery in the
+  // middle of the screen the pictures sit exactly as designed. Scrolling down, all of
+  // them rise ahead of the page and fall out of focus; scrolling back up, they sink and
+  // sharpen again.
   const FOCUS_FROM = 0.08; // share of the gallery's travel that stays fully in focus
   const FOCUS_TO = 0.6; // share at which the pictures are fully out of focus
   const DESIGN_WIDTH = 856;
 
+  // `approach`: the pictures come forward through 3D space from far behind the page as it
+  // scrolls to them. Each starts deep, so small, turned on its upright axis, faint and
+  // soft, and arrives flat, sharp and at its own size, staying in its own place throughout.
+  //
+  // They take turns, in the order they come onto the screen, from the top one down. A
+  // picture's turn takes `span` of the screen's height of scrolling. It begins once the
+  // picture's middle has crossed the foot of the screen and the one before is `lead` of
+  // the way through its own turn, which with ease-out is all but arrived. The last has
+  // arrived about when the gallery reaches the middle of the screen.
+  const APPROACH = {
+    lens: 800, // the perspective, in px at the design width: smaller is more dramatic
+    opacity: 0.2, // the share of its opacity a picture starts at
+    blur: 3, // how soft it starts, in px on screen at the design width
+    span: 0.24,
+    lead: 0.7, // 1 keeps the turns strictly apart; lower lets them overlap more
+  };
+  // One row per picture, in gallery order, so that no two move alike.
+  //   size - how large it looks at the start, as a share of its size: smaller is deeper
+  //   turn - the angle it starts turned by, in degrees: the pictures on the left turn one
+  //          way and those on the right the other, each facing the middle
+  //   ease - how strongly it settles: higher comes forward sooner and settles for longer
+  const DEPTHS = [
+    { size: 0.22, turn: 28, ease: 3 },
+    { size: 0.34, turn: -22, ease: 2.6 },
+    { size: 0.42, turn: 20, ease: 3.4 },
+    { size: 0.26, turn: -30, ease: 2.8 },
+  ];
+
+  // `collage`: the gallery pins to the screen while the page scrolls on, and the four
+  // pictures move from where the design has them into a second arrangement, drawn in
+  // closer around the headline, which stays where it is. Scrolling back undoes it.
+  //   phone, wide - where each picture ends up, in gallery order: its left, top, width and
+  //                 height as shares of the gallery's width and height. In px, in the
+  //                 402 x 729.5 and 856 x 894 design frames:
+  //                   phone  96,168 72x92    236,84 84x112    70,436 70x88     238,500 78x104
+  //                   wide   118,48 104x132  618,96 124x168   196,452 148x186  560,560 112x150
+  //   spans       - the stretch of the pinned scroll each picture moves through, so that no
+  //                 two start or stop together
+  //   smooth      - the share of the way to where the scroll points that the pictures
+  //                 cover per screen refresh: lower trails the scroll more softly
+  const COLLAGE = {
+    phone: [
+      [0.2388, 0.2303, 0.1791, 0.1261],
+      [0.5871, 0.1151, 0.209, 0.1535],
+      [0.1741, 0.5977, 0.1741, 0.1206],
+      [0.592, 0.6854, 0.194, 0.1426],
+    ],
+    wide: [
+      [0.1379, 0.0537, 0.1215, 0.1477],
+      [0.722, 0.1074, 0.1449, 0.1879],
+      [0.229, 0.5056, 0.1729, 0.2081],
+      [0.6542, 0.6264, 0.1308, 0.1678],
+    ],
+    spans: [
+      [0.08, 0.9],
+      [0.04, 0.94],
+      [0, 0.88],
+      [0.12, 1],
+    ],
+    smooth: 0.12,
+  };
+
   const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
+  const mix = (from: number, to: number, share: number) => from + (to - from) * share;
+  // Slow away, slow to rest. A higher power lingers longer at both ends.
+  const glide = (n: number, power: number) =>
+    n < 0.5 ? 0.5 * (2 * n) ** power : 1 - 0.5 * (2 * (1 - n)) ** power;
+
+  const rearrange = (gallery: HTMLElement, pictures: HTMLElement[], reduced: MediaQueryList) => {
+    const pin = gallery.closest<HTMLElement>("[data-pin]")!;
+    const stage = gallery.parentElement!;
+    const wide = window.matchMedia("(min-width: 48rem)");
+    let rest: number[][] = []; // where the design has each picture, as shares of the gallery
+    let shown = 0; // how far through the rearrangement the pictures are, from 0 to 1
+    let frame = 0;
+
+    const place = (through: number) => {
+      const ends = wide.matches ? COLLAGE.wide : COLLAGE.phone;
+      pictures.forEach((picture, i) => {
+        const [from, to] = COLLAGE.spans[i];
+        const moved = clamp((through - from) / (to - from), 0, 1);
+        // Across and down ease differently, so each picture's path bends a little, and
+        // every other picture bends the other way.
+        const across = glide(moved, i % 2 ? 1.6 : 2.2);
+        const down = glide(moved, i % 2 ? 2.2 : 1.6);
+        const size = glide(moved, 1.8);
+        const [left, top, width, height] = rest[i];
+        const [endLeft, endTop, endWidth, endHeight] = ends[i];
+
+        picture.style.left = `${(mix(left, endLeft, across) * 100).toFixed(3)}%`;
+        picture.style.top = `${(mix(top, endTop, down) * 100).toFixed(3)}%`;
+        picture.style.width = `${(mix(width, endWidth, size) * 100).toFixed(3)}%`;
+        picture.style.height = `${(mix(height, endHeight, size) * 100).toFixed(3)}%`;
+      });
+    };
+
+    // Where the design has the pictures is read from the page itself, so the collage
+    // always starts from exactly that, at any width.
+    const measure = () => {
+      for (const picture of pictures)
+        for (const set of ["left", "top", "right", "bottom", "width", "height", "aspect-ratio"])
+          picture.style.removeProperty(set);
+      const { offsetWidth: width, offsetHeight: height } = gallery;
+      rest = pictures.map((picture) => [
+        picture.offsetLeft / width,
+        picture.offsetTop / height,
+        picture.offsetWidth / width,
+        picture.offsetHeight / height,
+      ]);
+      for (const picture of pictures) {
+        picture.style.right = "auto";
+        picture.style.bottom = "auto";
+        picture.style.aspectRatio = "auto";
+      }
+      place(shown);
+    };
+
+    // How far the page has scrolled through the pinned stretch, from 0 to 1.
+    const aim = () => {
+      const distance = pin.offsetHeight - stage.offsetHeight;
+      if (reduced.matches || distance <= 0) return 0;
+      return clamp(-pin.getBoundingClientRect().top / distance, 0, 1);
+    };
+
+    const step = () => {
+      const target = aim();
+      shown += (target - shown) * COLLAGE.smooth;
+      if (Math.abs(target - shown) < 0.0005) shown = target;
+      place(shown);
+      frame = shown === target ? 0 : requestAnimationFrame(step);
+    };
+    const follow = () => {
+      if (!frame) frame = requestAnimationFrame(step);
+    };
+    const reset = () => {
+      shown = aim();
+      measure();
+    };
+
+    window.addEventListener("scroll", follow, { passive: true });
+    window.addEventListener("resize", reset);
+    reduced.addEventListener("change", reset);
+    reset();
+  };
 
   document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((gallery) => {
     const pictures = [...gallery.querySelectorAll<HTMLElement>("[data-float]")];
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (gallery.dataset.motion === "collage") {
+      rearrange(gallery, pictures, reduced);
+      return;
+    }
+    const approach = gallery.dataset.motion === "approach";
 
     const update = () => {
       const view = window.innerHeight;
@@ -147,7 +343,48 @@ const slots = [
         : 0;
       const scale = box.width / DESIGN_WIDTH;
 
-      for (const picture of pictures) {
+      // The turns, for pictures that come forward: how far the gallery's top edge has to
+      // be above the foot of the screen for each picture's turn to begin.
+      const turn = view * APPROACH.span;
+      const starts: number[] = [];
+      if (approach) {
+        const middles = pictures.map((picture) => picture.offsetTop + picture.offsetHeight / 2);
+        let start = -Infinity;
+        for (const i of [...pictures.keys()].sort((a, b) => middles[a] - middles[b])) {
+          start = Math.max(middles[i], start + turn * APPROACH.lead);
+          starts[i] = start;
+        }
+      }
+
+      for (const [i, picture] of pictures.entries()) {
+        if (approach) {
+          const depth = DEPTHS[i % DEPTHS.length];
+          // How far through its turn this picture is. Ease-out: most of the way comes
+          // early, then the picture settles.
+          const come = clamp((view - box.top - starts[i]) / turn, 0, 1);
+          const arrived = reduced.matches ? 1 : 1 - (1 - come) ** depth.ease;
+
+          // The lens sits `lens` in front of the page. A picture that looks `size` of its
+          // own size is lens * (1 / size - 1) behind the page.
+          const lens = APPROACH.lens * scale;
+          const behind = lens * (1 / depth.size - 1) * (1 - arrived);
+          const size = lens / (lens + behind);
+          const opacity = APPROACH.opacity + (1 - APPROACH.opacity) * arrived;
+
+          // Once arrived it carries no transform at all, so it is exactly as designed.
+          picture.style.transform =
+            arrived === 1
+              ? "none"
+              : `perspective(${lens.toFixed(1)}px) translateZ(${(-behind).toFixed(1)}px) rotateY(${(depth.turn * (1 - arrived)).toFixed(2)}deg)`;
+          picture.style.opacity = (Number(picture.dataset.opacity) * opacity).toFixed(3);
+          // The blur shrinks with the picture, so it is set larger the smaller the picture is.
+          picture.style.setProperty(
+            "--blur",
+            `${((APPROACH.blur * scale * (1 - arrived)) / size).toFixed(1)}px`,
+          );
+          continue;
+        }
+
         const rest = Number(picture.dataset.blur);
         const blur = rest + defocus * (Number(picture.dataset.soft) - rest);
         const shift = travel * Number(picture.dataset.rise) * scale;

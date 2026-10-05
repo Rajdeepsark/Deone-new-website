@@ -72,6 +72,14 @@ pictures:
       alt: Yachts anchored in a sheltered cove beneath pale cliffs
     - image: /suites/prestige-cliffs.jpg
 
+  # On this page only, the gallery pins to the screen for a stretch of scrolling while the
+  # four pictures rearrange, each on its own path, from the design's composition into a
+  # second one drawn in closer around the headline. The headline stays still, and
+  # scrolling back undoes it. The second composition is set out in SuitePictures.astro.
+  # `motion: approach` brings the pictures forward from the distance one after another
+  # instead; take the line out and they rise and sharpen, as on the other suites.
+  motion: collage
+
   # The Deluxe pictures and wording. Each picture is paired with the title it suits.
   slides:
     - title: In good company
