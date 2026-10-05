@@ -27,7 +27,7 @@ const suites = defineCollection({
     // whose values are in src/styles/global.css (the --suite-* variables).
     theme: z
       .object({
-        pictures: section.optional(),
+        pictures: section.extend({ sliderAccent: hex.optional() }).optional(),
         benefits: section.optional(),
         // The security section's own pieces. `tab` is the tab in view; without it the
         // accent is used. `box` is the feature boxes and `boxLine` the line around the

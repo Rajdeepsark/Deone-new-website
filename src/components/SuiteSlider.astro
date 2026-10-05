@@ -130,7 +130,7 @@ const hasNext = slides.length > 1;
               aria-current={i === 0 ? "true" : undefined}
               data-slide-mark
             >
-              <span class="block h-px w-4 bg-suite-ink/30 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-focus-visible/mark:bg-suite-ink group-aria-[current]/mark:w-16 group-aria-[current]/mark:bg-suite-accent motion-reduce:transition-none" />
+              <span class="block h-px w-4 bg-suite-ink/30 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-focus-visible/mark:bg-suite-ink group-aria-[current]/mark:w-16 group-aria-[current]/mark:[background-color:var(--suite-slider-accent,var(--color-suite-accent))] motion-reduce:transition-none" />
             </button>
           ))}
         </div>

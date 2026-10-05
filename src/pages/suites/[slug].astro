@@ -47,6 +47,8 @@ for (const key of sections) {
 }
 const includedPhone = theme.included?.backgroundPhone ?? theme.included?.background;
 if (includedPhone) cssVariables.push(`--suite-included-bg-phone: ${includedPhone}`);
+if (theme.pictures?.sliderAccent)
+  cssVariables.push(`--suite-slider-accent: ${theme.pictures.sliderAccent}`);
 if (theme.accent) cssVariables.push(`--color-suite-accent: ${theme.accent}`);
 // The security section's tab, box line and icons follow the accent unless the suite sets them.
 const tab = theme.security?.tab ?? theme.accent;

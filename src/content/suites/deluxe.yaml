@@ -12,6 +12,7 @@ theme:
   # "A place to belong": from the design file.
   pictures:
     background: "linear-gradient(180deg, #F2FBF9 0%, #CCEEE7 95.51%)"
+    sliderAccent: "#80D5C2"
   # PROVISIONAL: the design's backgrounds for the next two sections have not arrived.
   # Until they do, these are built from the greens around them, each starting where the
   # section above ends. Replace each with the value from the design file.
