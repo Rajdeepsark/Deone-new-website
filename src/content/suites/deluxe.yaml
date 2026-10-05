@@ -1,8 +1,8 @@
 # PLACEHOLDER CONTENT: parts of this page still reuse the Prestige copy and pictures. The
 # name, the hero, the colours below, the carousel, "A broader way to live", the quote,
-# "Your Deone Card", "What's included" and the closing banner are Deluxe's own; pictures
-# still standing in are marked STAND-IN. Replace the rest with the Deluxe copy and
-# pictures as they arrive.
+# "Your Deone Card", "What's included", "Full benefits" and the closing banner are
+# Deluxe's own; pictures still standing in are marked STAND-IN. Replace the rest with the
+# Deluxe copy and pictures as they arrive.
 name: Deluxe
 
 # The page's colours, section by section. `background` takes any CSS background; `ink` is
@@ -35,6 +35,7 @@ theme:
   # "Full benefits": from the design file.
   details:
     background: "#80D5C2"
+    ink: "#454947"
   # Still on the Prestige defaults: accent and night.
 
 hero:
@@ -215,44 +216,38 @@ included:
 
 details:
   headline: Full benefits
-  subtext: Explore the banking, travel, wellbeing, rewards and protection included in Deluxe.
+  subtext: The parts of Deone, gathered in one membership.
 
-  # Shown three to a row. `icon` is one of: card, coin, connect, travel, wellness, diamond.
+  # The Deluxe groups, items and icons, as the design shows them. Shown three to a row.
+  # `icon` is any name from src/icons.ts, e.g. card, coin, connect, travel, wellness, diamond.
   groups:
     - title: Products
       icon: card
       items:
-        - Metal tokenized card
-        - Cold storage Vault
+        - Deone Card
     - title: Banking
       icon: coin
       items:
-        - Onchain banking account
-        - Zero FX Fees
-        - Price and purchase protection
-        - Local currency reserves
-    - title: Connectivity
+        - Onchain Banking Account
+        - Global spending
+    - title: Membership
       icon: connect
       items:
-        - Cloud miner
-        - eSIM 10 GB
-    - title: Travel
+        - Members-only community
+    - title: Experiences
       icon: travel
       items:
-        - +1.700 airport lounges worldwide
-        - Travel accident insurance
-        - Baggage delay
-        - Lost luggage
+        - Curated experiences
     - title: Wellness
       icon: wellness
       items:
-        - Wellness benefits access
-        - Wellness point system
+        - Wellness Club
+        - Wellness tools
     - title: Rewards
       icon: diamond
       items:
-        - Rewards hub
-        - Shopping rewards
+        - Better Life Rewards
+        - Rewards Hub
 
 # The banner that closes the page and leads on to another suite.
 # `href` is where it goes. `color` is the wall colour phones fade the picture into at
