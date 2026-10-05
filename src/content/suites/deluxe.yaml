@@ -104,12 +104,10 @@ benefits:
       image: /suites/deluxe-banking.jpg
       imageAlt: City skyline across the water at sunset
 
-    # STAND-IN PICTURE: the design has friends on sofas in a glass-walled garden room.
-    # Replace with that picture (328 x 430, 2x) when it arrives.
     - title: Wellness
       description: Tools that support how you feel and live.
-      image: /suites/prestige-wellness.jpg
-      imageAlt: Woman reclining with her eyes closed in dappled light
+      image: /suites/deluxe-wellness.jpg
+      imageAlt: Three women in robes relaxing on a sofa in a glass-walled garden room, trees in sunlight beyond
 
     - title: Rewards
       description: Rewards that grow as you spend, travel and live.
