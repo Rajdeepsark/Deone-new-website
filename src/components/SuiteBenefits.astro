@@ -4,23 +4,30 @@ interface Benefit {
   description: string;
   image?: string;
   imageAlt: string;
-  href: string;
+  href?: string;
 }
 
 interface Props {
   eyebrow: string;
   headline: string;
   ctaLabel?: string;
+  lastCorner?: "left" | "right";
   items: Benefit[];
 }
 
-const { eyebrow, headline, ctaLabel = "Learn more", items } = Astro.props;
+const { eyebrow, headline, ctaLabel = "Learn more", lastCorner = "right", items } = Astro.props;
 
 // In the phone design the last picture is rounded on the other side.
-const corner = (i: number) =>
-  i === items.length - 1
-    ? "rounded-tl-[24px] md:rounded-tl-none md:rounded-tr-[24px]"
-    : "rounded-tr-[24px]";
+// On wide screens the middle card gets both top corners rounded, and the last one is
+// rounded on the right unless the suite's design mirrors the first (`lastCorner`).
+const corner = (i: number, total: number) => {
+  const isLast = i === total - 1;
+  const isMiddleOfThree = total === 3 && i === 1;
+  if (isLast && lastCorner === "left") return "rounded-tl-[24px]";
+  if (isLast) return "rounded-tl-[24px] md:rounded-tl-none md:rounded-tr-[24px]";
+  if (isMiddleOfThree) return "rounded-tr-[24px] md:rounded-tl-[24px] md:rounded-tr-[24px]";
+  return "rounded-tr-[24px]";
+};
 ---
 
 <section
@@ -55,7 +62,7 @@ const corner = (i: number) =>
               alt={item.imageAlt}
               class:list={[
                 "aspect-[370/484] w-full object-cover md:aspect-[328/430]",
-                corner(i),
+                corner(i, items.length),
               ]}
               loading="lazy"
               decoding="async"
@@ -64,7 +71,7 @@ const corner = (i: number) =>
             <div
               class:list={[
                 "aspect-[370/484] w-full bg-suite-ink/10 md:aspect-[328/430]",
-                corner(i),
+                corner(i, items.length),
               ]}
               role="img"
               aria-label={item.imageAlt}
@@ -86,14 +93,16 @@ const corner = (i: number) =>
             </p>
           </div>
 
-          <!-- The phone design has no link here. -->
-          <a
-            href={item.href}
-            class="border-b border-suite-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-suite-ink max-md:hidden"
-          >
-            {ctaLabel}
-            <span class="sr-only"> about {item.title}</span>
-          </a>
+          <!-- Only an item with somewhere to go gets a link. The phone design has none. -->
+          {item.href && (
+            <a
+              href={item.href}
+              class="border-b border-suite-ink/30 pb-1 font-sans text-[12px] font-medium uppercase leading-[14px] tracking-[0.13em] transition hover:border-suite-ink max-md:hidden"
+            >
+              {ctaLabel}
+              <span class="sr-only"> about {item.title}</span>
+            </a>
+          )}
         </li>
       ))}
     </ul>

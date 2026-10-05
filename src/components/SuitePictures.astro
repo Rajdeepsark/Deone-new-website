@@ -34,9 +34,10 @@ const slots = [
   {
     phone: "left-[15.92%] top-[19.81%] w-[15.92%]",
     wide: "md:left-0 md:top-[14.9%] md:w-[10.4%]",
-    blur: 4,
+    blur: 0,
     soft: 10,
     rise: 70,
+    opacity: 0.6,
   },
   {
     phone: "right-[3.98%] top-0 w-[24.88%]",
@@ -44,6 +45,7 @@ const slots = [
     blur: 0,
     soft: 12,
     rise: 110,
+    opacity: 1,
   },
   {
     phone: "bottom-0 left-0 w-[24.88%]",
@@ -51,13 +53,15 @@ const slots = [
     blur: 0,
     soft: 14,
     rise: 150,
+    opacity: 1,
   },
   {
     phone: "right-[15.42%] top-[61.34%] w-[15.92%]",
     wide: "md:right-0 md:top-[58.6%] md:w-[10.4%]",
-    blur: 4,
+    blur: 0,
     soft: 10,
     rise: 90,
+    opacity: 0.6,
   },
 ];
 ---
@@ -79,7 +83,7 @@ const slots = [
             slots[i].phone,
             slots[i].wide,
           ]}
-          style={`--blur:${slots[i].blur}px`}
+          style={`--blur:${slots[i].soft}px; opacity:${slots[i].opacity};`}
           loading="lazy"
           decoding="async"
           data-float
@@ -136,7 +140,11 @@ const slots = [
       const travel = reduced.matches
         ? 0
         : clamp((box.top + box.height / 2 - view / 2) / ((view + box.height) / 2), -1, 1);
-      const defocus = clamp((Math.abs(travel) - FOCUS_FROM) / (FOCUS_TO - FOCUS_FROM), 0, 1);
+      // Only defocus on the way in (travel > 0). Once sharp at centre, stay sharp as the
+      // gallery continues scrolling off the top.
+      const defocus = travel > 0
+        ? clamp((travel - FOCUS_FROM) / (FOCUS_TO - FOCUS_FROM), 0, 1)
+        : 0;
       const scale = box.width / DESIGN_WIDTH;
 
       for (const picture of pictures) {

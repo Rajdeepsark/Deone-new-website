@@ -3,29 +3,120 @@ interface Props {
   text: string;
   image?: string;
   imageAlt?: string;
+  /** Which part of the picture phones keep in view, as a CSS object-position. */
+  imagePosition?: string;
 }
 
-const { text, image, imageAlt = "" } = Astro.props;
+const { text, image, imageAlt = "", imagePosition = "34% top" } = Astro.props;
 ---
 
+<!--
+  Mobile: simple section with the quote on top of the background image, no parallax.
+  Desktop (md+): mirrors the homepage Hero — outer container is 150vh so there's 50vh of
+  scroll while the inner sticky viewport is pinned. During the pin, the background image
+  (150% tall) translates upward by a quarter of the viewport.
+-->
 <section
-  class="relative isolate flex aspect-[21/9] min-h-[400px] w-full items-center justify-center overflow-hidden bg-suite-night px-6 text-brand-cream"
+  data-quote-section
+  class="relative isolate flex aspect-[402/874] w-full items-center justify-center overflow-hidden bg-suite-night px-6 text-brand-cream md:aspect-auto md:min-h-0 md:h-[150vh] md:block md:px-0 md:overflow-visible"
 >
+  <!-- Mobile: tall portrait card with image + dark scrim + centred quote.
+       Image is 120% tall so it can translate upward as the section passes through
+       the viewport, giving a subtle parallax effect. -->
   {image && (
     <img
+      data-quote-bg-mobile
       src={image}
       alt={imageAlt}
-      class="absolute inset-0 -z-10 h-full w-full object-cover object-[28%_top] md:object-top"
+      class="absolute inset-x-0 top-0 -z-10 h-[120%] w-full object-cover will-change-transform md:hidden"
+      style={`object-position: ${imagePosition};`}
       loading="lazy"
       decoding="async"
     />
   )}
+  <div aria-hidden="true" class="absolute inset-0 -z-10 bg-black/40 md:hidden"></div>
 
   <p
-    class="text-center font-serif text-[26px] leading-[1.27] font-normal uppercase tracking-[0.02em] md:text-[36px] xl:text-[44px]"
+    class="relative text-center font-serif text-[22px] leading-[1.3] font-normal uppercase tracking-[0.04em] md:hidden"
   >
     {text.split("\n").map((line) => (
-      <span class="md:block">{line} </span>
+      <span>{line} </span>
     ))}
   </p>
+
+  <!-- Desktop: pinned viewport with parallax image. -->
+  <div class="hidden md:block md:sticky md:top-0 md:h-[100svh] md:w-full md:overflow-hidden md:isolate md:bg-suite-night">
+    {image && (
+      <img
+        data-quote-bg
+        src={image}
+        alt={imageAlt}
+        class="absolute inset-x-0 top-0 -z-10 h-[150%] w-full object-cover object-top will-change-transform"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+
+    <div class="relative flex h-full items-center justify-center px-6">
+      <p
+        class="text-center font-serif text-[36px] leading-[1.27] font-normal uppercase tracking-[0.02em] xl:text-[44px]"
+      >
+        {text.split("\n").map((line) => (
+          <span class="block">{line} </span>
+        ))}
+      </p>
+    </div>
+  </div>
 </section>
+
+<script>
+  const container = document.querySelector<HTMLElement>("[data-quote-section]");
+  const bg = document.querySelector<HTMLElement>("[data-quote-bg]");
+  const bgMobile = document.querySelector<HTMLElement>("[data-quote-bg-mobile]");
+  const wide = window.matchMedia("(min-width: 48rem)");
+  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+
+  if (container) {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (wide.matches) {
+        // Desktop: pinned 150vh parallax (image is 150% tall, translates up to 25% of vp).
+        if (bgMobile) bgMobile.style.transform = "";
+        if (!bg) return;
+        const rect = container.getBoundingClientRect();
+        const scrollable = container.offsetHeight - window.innerHeight;
+        if (scrollable <= 0) return;
+        const scrolled = Math.max(0, Math.min(scrollable, -rect.top));
+        const progress = scrolled / scrollable;
+        const translate = progress * (window.innerHeight * 0.25);
+        bg.style.transform = `translate3d(0, -${translate}px, 0)`;
+      } else {
+        // Mobile: image is 120% tall, inside aspect-[402/874] portrait card. Translate it
+        // from 0 → -20% of its own height as the section passes through the viewport.
+        if (bg) bg.style.transform = "";
+        if (!bgMobile) return;
+        const view = window.innerHeight;
+        const rect = container.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > view) return;
+        // 0 as the section just enters at the bottom of the viewport, 1 as it leaves off
+        // the top — gives a clean start/end alignment either side of the viewport.
+        const progress = clamp(
+          (view - rect.top) / (view + rect.height),
+          0,
+          1,
+        );
+        const translate = progress * 20; // percent of image height
+        bgMobile.style.transform = `translate3d(0, -${translate.toFixed(2)}%, 0)`;
+      }
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    wide.addEventListener("change", onScroll);
+    update();
+  }
+</script>

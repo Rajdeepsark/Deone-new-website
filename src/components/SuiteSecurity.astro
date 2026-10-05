@@ -15,11 +15,19 @@ interface Placement {
   width: number;
 }
 
+interface Sequence {
+  folder: string;
+  frames: number;
+}
+
 interface Tab {
   label: string;
+  headline?: string;
+  subtext?: string;
   image?: string;
   imageAlt?: string;
   imagePlacement?: Placement;
+  sequence?: Sequence;
   features: Feature[];
 }
 
@@ -44,18 +52,36 @@ const place = ({ left, top, width }: Placement = DEFAULT_PLACEMENT) =>
     `--w:${((width / PANEL.width) * 100).toFixed(2)}%`,
   ].join(";");
 
+// A sequence's frames are numbered from 000. The script below builds the same names.
+const frame = (sequence: Sequence, n: number) =>
+  `${sequence.folder}/${String(n).padStart(3, "0")}.webp`;
+
 // One picture per feature when the features bring their own, otherwise the tab's single
-// picture, which then changes pose from feature to feature.
+// picture, which then changes pose from feature to feature. A tab with a sequence shows
+// its first frame, and the script draws the others as the page scrolls.
 const pictures = (tab: Tab) =>
-  tab.features.some((feature) => feature.image)
-    ? tab.features.map((feature) => feature.image ?? tab.image).filter(Boolean)
-    : tab.image
-      ? [tab.image]
-      : [];
+  tab.sequence
+    ? [frame(tab.sequence, 0)]
+    : tab.features.some((feature) => feature.image)
+      ? tab.features.map((feature) => feature.image ?? tab.image).filter(Boolean)
+      : tab.image
+        ? [tab.image]
+        : [];
 
 // On wide screens the section scrolls through the features of the tab in view, one step
 // each. The longest list decides how far the page scrolls.
 const steps = Math.max(...tabs.map((tab) => tab.features.length));
+
+// A tab can bring its own heading, shown while it is chosen. When none does, there is
+// just the section's.
+const headings = tabs.some((tab) => tab.headline || tab.subtext)
+  ? tabs.map((tab) => ({ headline: tab.headline ?? headline, subtext: tab.subtext ?? subtext }))
+  : [{ headline, subtext }];
+
+// A suite with one product has no tabs to choose from, so none show. Its stage is then
+// only as tall as the list's window: 714px, against 830px with the tabs above it.
+const tabbed = tabs.length > 1;
+const stageHeight = tabbed ? 830 : 714;
 
 const id = (kind: string, index: number) => `security-${kind}-${index}`;
 ---
@@ -71,17 +97,31 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       {eyebrow}
     </p>
 
-    <h2
-      class="mt-6 font-sans text-[28px] leading-[1.214] font-normal uppercase tracking-[0.02em] md:text-[42px]"
-    >
-      {headline}
-    </h2>
+    <!--
+      The headings share one cell, so the header is as tall as the tallest of them and
+      nothing below moves when the tab, and with it the heading, changes.
+    -->
+    <div class="grid">
+      {headings.map((heading, i) => (
+        <div
+          class="invisible col-start-1 row-start-1 opacity-0 transition-[opacity,visibility] duration-300 data-[active]:visible data-[active]:opacity-100 motion-reduce:transition-none"
+          data-heading
+          data-active={i === 0 ? "" : undefined}
+        >
+          <h2
+            class="mt-6 font-sans text-[28px] leading-[1.214] font-normal uppercase tracking-[0.02em] md:text-[42px]"
+          >
+            {heading.headline}
+          </h2>
 
-    <p
-      class="mx-auto mt-7 max-w-[488px] font-sans text-[16px] font-normal leading-[27px] tracking-[0.01em]"
-    >
-      {subtext}
-    </p>
+          <p
+            class="mx-auto mt-7 max-w-[488px] font-sans text-[16px] font-normal leading-[27px] tracking-[0.01em]"
+          >
+            {heading.subtext}
+          </p>
+        </div>
+      ))}
+    </div>
   </header>
 
   <!--
@@ -89,46 +129,53 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
     distance the page scrolls while the stage inside stays pinned, one stretch per step.
   -->
   <div
-    class="mt-16 lg:mt-[120px] lg:h-[calc(830px_+_var(--steps)_*_var(--stretch))] lg:[--stretch:50svh]"
-    style={`--steps:${steps}`}
+    class:list={[
+      "mt-16 lg:h-[calc(var(--stage)_+_var(--steps)_*_var(--stretch))] lg:[--stretch:50svh]",
+      // Without tabs the list's window, whose top 200px are clear, starts nearer the heading.
+      tabbed ? "lg:mt-[120px]" : "lg:mt-12",
+    ]}
+    style={`--steps:${steps};--stage:${stageHeight}px`}
     data-scroller
   >
     <div
-      class="mx-auto flex max-w-[1032px] flex-col items-center lg:sticky lg:top-[max(16px,calc((100svh_-_830px)_/_2))] lg:origin-top lg:scale-[var(--fit,1)]"
-      data-stage
+      class="mx-auto flex max-w-[1032px] flex-col items-center lg:sticky lg:top-[max(16px,calc((100svh_-_var(--stage))_/_2))] lg:origin-top lg:scale-[var(--fit,1)]"
+      data-stage={stageHeight}
     >
       <!--
         In the design each tab is 203px wide, with a 4px gap between tabs and 4px of padding
         around them: 418px for two tabs, 625px for three. Phones let long labels wrap.
       -->
-      <div
-        class="flex w-full gap-1 rounded-lg bg-brand-sand p-1 text-brand-ink ring-1 ring-inset ring-brand-ink/[0.04]"
-        style={`max-width: ${tabs.length * 207 + 4}px`}
-        role="tablist"
-        aria-label={headline}
-      >
-        {tabs.map((tab, i) => (
-          <button
-            type="button"
-            class="h-11 flex-1 rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 md:whitespace-nowrap hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-suite-accent aria-selected:text-brand-sand"
-            role="tab"
-            id={id("tab", i)}
-            aria-controls={id("panel", i)}
-            aria-selected={i === 0 ? "true" : "false"}
-            tabindex={i === 0 ? 0 : -1}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {tabbed && (
+        <div
+          class="flex w-full gap-1 rounded-lg bg-brand-sand p-1 text-brand-ink ring-1 ring-inset ring-brand-ink/[0.04]"
+          style={`max-width: ${tabs.length * 207 + 4}px`}
+          role="tablist"
+          aria-label={headline}
+        >
+          {tabs.map((tab, i) => (
+            <button
+              type="button"
+              class="h-11 flex-1 rounded-lg px-2 font-sans text-[12px] leading-[15px] font-medium uppercase tracking-[0.13em] outline-none transition-colors duration-300 md:whitespace-nowrap hover:bg-brand-ink/5 focus-visible:ring-1 focus-visible:ring-brand-ink aria-selected:bg-suite-tab aria-selected:text-brand-sand"
+              role="tab"
+              id={id("tab", i)}
+              aria-controls={id("panel", i)}
+              aria-selected={i === 0 ? "true" : "false"}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {tabs.map((tab, i) => (
         <div
-          class="relative mt-16 w-full"
-          role="tabpanel"
+          class:list={["relative w-full", tabbed && "mt-16"]}
+          role={tabbed ? "tabpanel" : undefined}
           id={id("panel", i)}
-          aria-labelledby={id("tab", i)}
+          aria-labelledby={tabbed ? id("tab", i) : undefined}
           hidden={i !== 0}
+          data-panel
         >
           {pictures(tab).length > 0 && (
             <div
@@ -137,7 +184,24 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
               data-picture
               data-state="0"
             >
-              {pictures(tab).length > 1 ? (
+              {tab.sequence ? (
+                <>
+                  {/* The first frame holds the place. The canvas covers it once it has drawn one. */}
+                  <img
+                    src={pictures(tab)[0]}
+                    alt={tab.imageAlt}
+                    class="w-full group-data-[playing]/picture:opacity-0"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <canvas
+                    class="absolute inset-0 h-full w-full"
+                    aria-hidden="true"
+                    data-sequence={tab.sequence.folder}
+                    data-frames={tab.sequence.frames}
+                  ></canvas>
+                </>
+              ) : pictures(tab).length > 1 ? (
                 pictures(tab).map((src, n) => (
                   <img
                     src={src}
@@ -174,12 +238,12 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
             >
               {tab.features.map((feature, n) => (
                 <li
-                  class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-brand-cream p-6 text-brand-ink ring-1 ring-inset ring-suite-accent/40 transition-[background-color,box-shadow] duration-[600ms] lg:bg-brand-cream/80 lg:ring-transparent lg:data-[active]:bg-brand-cream lg:data-[active]:ring-suite-accent/40"
+                  class="group/feature flex cursor-pointer flex-col gap-6 rounded-lg bg-suite-box p-6 text-brand-ink ring-1 ring-inset ring-suite-box-line transition-[background-color,box-shadow] duration-[600ms] lg:bg-suite-box/80 lg:ring-transparent lg:data-[active]:bg-suite-box lg:data-[active]:ring-suite-box-line"
                   data-feature
                   data-active={n === 0 ? "" : undefined}
                 >
                   <span
-                    class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 bg-[linear-gradient(174.31deg,var(--color-suite-accent)_39.64%,#F3E4DA_208.39%)] text-brand-sand transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
+                    class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-sand/10 [background:var(--suite-icon-bg)] text-suite-icon-ink transition-opacity duration-[600ms] lg:opacity-30 lg:group-data-[active]/feature:opacity-100"
                   >
                     <Icon name={feature.icon} stroke={1.4} />
                   </span>
@@ -188,7 +252,7 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
                     <h3 class="font-sans text-[16px] leading-[22px] font-medium uppercase tracking-[0.03em]">
                       <button
                         type="button"
-                        class="rounded-sm text-left uppercase outline-none focus-visible:ring-1 focus-visible:ring-brand-ink focus-visible:ring-offset-4 focus-visible:ring-offset-brand-cream"
+                        class="rounded-sm text-left uppercase outline-none focus-visible:ring-1 focus-visible:ring-brand-ink focus-visible:ring-offset-4 focus-visible:ring-offset-suite-box"
                         aria-pressed={n === 0 ? "true" : "false"}
                       >
                         {feature.title}
@@ -216,19 +280,97 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
   // it from its first feature. On narrow screens nothing pins and everything switches
   // directly.
   const POSES = 3; // states of a tab's single picture, see the classes on the image
-  const STAGE_HEIGHT = 830;
   const SMALLEST_FIT = 0.7;
+  const EASE = 0.18; // the share of the way to the frame aimed at covered per screen refresh
 
   const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
+
+  // A tab's picture can be a sequence of frames, drawn on a canvas. `seek` takes how far
+  // through them to be, from 0 to 1, and eases the picture there. The frames are fetched
+  // the first time one is asked for, every eighth first so a rough turn is there early;
+  // until a frame arrives, the nearest one that has stands in for it.
+  const createSequence = (canvas: HTMLCanvasElement) => {
+    const context = canvas.getContext("2d")!;
+    const count = Number(canvas.dataset.frames);
+    const frames: HTMLImageElement[] = [];
+    let target = 0;
+    let current = 0;
+    let drawn: HTMLImageElement | undefined;
+    let ticking = 0;
+
+    const nearest = (n: number) => {
+      const ready = (i: number) => frames[i]?.complete && frames[i].naturalWidth > 0;
+      for (let d = 0; d < count; d++) {
+        if (ready(n - d)) return frames[n - d];
+        if (ready(n + d)) return frames[n + d];
+      }
+    };
+
+    const draw = () => {
+      const frame = nearest(Math.round(current));
+      if (!frame) return;
+      // As many pixels as the screen shows, and no more than the frame has.
+      const width = Math.min(
+        frame.naturalWidth,
+        Math.round(canvas.clientWidth * window.devicePixelRatio),
+      );
+      if (!width) return; // the tab is not the one in view
+      const height = Math.round((width * frame.naturalHeight) / frame.naturalWidth);
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      } else if (frame === drawn) {
+        return;
+      }
+      context.clearRect(0, 0, width, height);
+      context.imageSmoothingQuality = "high";
+      context.drawImage(frame, 0, 0, width, height);
+      drawn = frame;
+      canvas.parentElement!.dataset.playing = "";
+    };
+
+    const load = () => {
+      for (const stride of [8, 4, 2, 1]) {
+        for (let n = 0; n < count; n += stride) {
+          if (frames[n]) continue;
+          frames[n] = new Image();
+          frames[n].onload = draw;
+          frames[n].src = `${canvas.dataset.sequence}/${String(n).padStart(3, "0")}.webp`;
+        }
+      }
+    };
+
+    const tick = () => {
+      current += (target - current) * EASE;
+      if (Math.abs(target - current) < 0.5) current = target;
+      draw();
+      ticking = current === target ? 0 : requestAnimationFrame(tick);
+    };
+
+    return {
+      canvas,
+      seek(progress: number) {
+        if (!frames.length) load();
+        target = progress * (count - 1);
+        if (!ticking) ticking = requestAnimationFrame(tick);
+      },
+    };
+  };
 
   document.querySelectorAll<HTMLElement>("[data-security]").forEach((section) => {
     const scroller = section.querySelector<HTMLElement>("[data-scroller]")!;
     const stage = section.querySelector<HTMLElement>("[data-stage]")!;
+    const stageHeight = Number(stage.dataset.stage);
     const tabs = [...section.querySelectorAll<HTMLElement>('[role="tab"]')];
-    const panels = [...section.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const panels = [...section.querySelectorAll<HTMLElement>("[data-panel]")];
+    const headings = [...section.querySelectorAll<HTMLElement>("[data-heading]")];
     const features = panels.map((panel) => [
       ...panel.querySelectorAll<HTMLElement>("[data-feature]"),
     ]);
+    const sequences = panels.map((panel) => {
+      const canvas = panel.querySelector<HTMLCanvasElement>("canvas[data-sequence]");
+      return canvas && createSequence(canvas);
+    });
 
     const wide = window.matchMedia("(min-width: 64rem)");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -239,6 +381,9 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
         tab.tabIndex = i === index ? 0 : -1;
       });
       panels.forEach((panel, i) => (panel.hidden = i !== index));
+      // One heading per tab, or a single one that stays.
+      if (headings.length > 1)
+        headings.forEach((heading, i) => heading.toggleAttribute("data-active", i === index));
     };
 
     // The panel has to be visible here, because the box positions are measured.
@@ -273,11 +418,33 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
     const distance = () => scroller.offsetHeight - stage.offsetHeight;
     const pin = () => parseFloat(getComputedStyle(stage).top) || 0;
 
+    // How far through the pinned stretch the page has scrolled, from 0 to 1.
+    const progress = () =>
+      clamp(pin() - scroller.getBoundingClientRect().top, 0, distance()) / distance();
+
     // The feature the scroll position points at, for the tab in view.
     const featureInView = () => {
       const count = features[tab].length;
-      const scrolled = clamp(pin() - scroller.getBoundingClientRect().top, 0, distance());
-      return Math.min(count - 1, Math.floor((scrolled / distance()) * count));
+      return Math.min(count - 1, Math.floor(progress() * count));
+    };
+
+    // A sequence follows the scroll. On wide screens it runs from where the page rests on
+    // the first feature to where it rests on the last, so the picture is at its first
+    // frame, its middle and its last at those points and moves while the list does. On
+    // narrow screens it runs while the picture is wholly on screen, travelling up it.
+    // With reduced motion it stays on its first frame.
+    const scrub = () => {
+      const sequence = sequences[tab];
+      if (!sequence || reduced.matches) return;
+      if (wide.matches) {
+        const rest = 0.5 / features[tab].length; // see scrollToFeature
+        sequence.seek(rest < 0.5 ? clamp((progress() - rest) / (1 - 2 * rest), 0, 1) : progress());
+        return;
+      }
+      const view = window.innerHeight;
+      const box = sequence.canvas.getBoundingClientRect();
+      if (box.bottom < -view || box.top > view * 2) return;
+      sequence.seek(clamp((view - box.bottom) / Math.max(1, view - box.height), 0, 1));
     };
 
     const scrollToFeature = (feature: number) => {
@@ -292,17 +459,20 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       tab = nextTab;
       if (!wide.matches) {
         show(feature);
+        scrub();
         return;
       }
       // Switch at once, then let the page travel to the chosen feature if it isn't there.
       const inView = featureInView();
       show(inView);
+      scrub();
       if (inView !== feature) scrollToFeature(feature);
     };
 
     const update = () => {
       if (!wide.matches) {
         section.style.setProperty("--reveal", "1");
+        scrub();
         return;
       }
 
@@ -310,13 +480,14 @@ const id = (kind: string, index: number) => `security-${kind}-${index}`;
       // Shrink the stage on screens too short to hold it.
       section.style.setProperty(
         "--fit",
-        clamp((view - 32) / STAGE_HEIGHT, SMALLEST_FIT, 1).toFixed(3),
+        clamp((view - 32) / stageHeight, SMALLEST_FIT, 1).toFixed(3),
       );
 
       const box = scroller.getBoundingClientRect();
       if (box.bottom < -view || box.top > view * 2) return;
 
       show(featureInView());
+      scrub();
 
       // The picture and the list come into view as the stage rises up the screen.
       const reveal = reduced.matches ? 1 : clamp((view - box.top) / (view * 0.6), 0, 1);

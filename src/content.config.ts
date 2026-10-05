@@ -3,10 +3,11 @@ import { glob } from "astro/loaders";
 import { iconNames } from "./icons";
 
 // A "What's included" card as phones show it: its place in the list (from 1), its
-// height there, and optionally another label.
+// height there, and optionally another label. `full` takes the height its column has
+// left over beside a taller one.
 const phoneCard = z.object({
   card: z.number().int().min(1),
-  size: z.enum(["short", "tall"]),
+  size: z.enum(["short", "tall", "full"]),
   label: z.string().optional(),
 });
 
@@ -28,17 +29,32 @@ const suites = defineCollection({
       .object({
         pictures: section.optional(),
         benefits: section.optional(),
-        security: section.optional(),
+        // The security section's own pieces. `tab` is the tab in view; without it the
+        // accent is used. `box` is the feature boxes and `boxLine` the line around the
+        // box in focus (any CSS colour, e.g. transparent for none); without it the line is
+        // the accent at 40%. `icon` is the feature icons' background, any CSS background;
+        // without it they fade from the accent, as on Prestige. `iconInk` is the colour of
+        // the drawing on them; without it that is the pale sand.
+        security: section
+          .extend({
+            tab: hex.optional(),
+            box: hex.optional(),
+            boxLine: z.string().optional(),
+            icon: z.string().optional(),
+            iconInk: hex.optional(),
+          })
+          .optional(),
         // Phones show this section on a background of its own; without `backgroundPhone`
         // they use `background` too.
         included: section.extend({ backgroundPhone: z.string().optional() }).optional(),
         details: section.optional(),
-        accent: hex.optional(), // active tab, slider marker, feature icons
+        accent: hex.optional(), // slider marker and, unless set under security, its tab, box line and icons
         night: hex.optional(), // hero, quote and closing banner backdrops
       })
       .default({}),
     hero: z.object({
       eyebrow: z.string().default("Suite"),
+      body: z.string().optional(),
       image: z.string(),
       imageAlt: z.string(),
       // Which part of the picture phones keep in view, as a CSS background-position.
@@ -73,13 +89,18 @@ const suites = defineCollection({
     benefits: z.object({
       eyebrow: z.string(),
       headline: z.string(),
+      // Which top corner of the last picture is rounded on wide screens. The first
+      // picture's is the right one and the middle picture has both; `left` makes the last
+      // mirror the first.
+      lastCorner: z.enum(["left", "right"]).default("right"),
       items: z.array(
         z.object({
           title: z.string(),
           description: z.string(),
           image: z.string().optional(),
           imageAlt: z.string(),
-          href: z.string().default("#"),
+          // Where "Learn more" goes. Without it the item has no link.
+          href: z.string().optional(),
         }),
       ),
     }),
@@ -87,6 +108,9 @@ const suites = defineCollection({
       text: z.string(),
       image: z.string().optional(),
       imageAlt: z.string().default(""),
+      // Which part of the picture phones keep in view, as a CSS object-position.
+      // Wide screens show the picture's middle.
+      imagePosition: z.string().default("34% top"),
     }),
     security: z.object({
       eyebrow: z.string(),
@@ -96,11 +120,22 @@ const suites = defineCollection({
         .array(
           z.object({
             label: z.string(),
+            // The heading shown above the tabs while this one is chosen. Without them
+            // the section's own headline and subtext stay.
+            headline: z.string().optional(),
+            subtext: z.string().optional(),
             image: z.string().optional(),
             imageAlt: z.string().default(""),
             // Where the picture sits in the 1512px design frame, in px.
             imagePlacement: z
               .object({ left: z.number(), top: z.number(), width: z.number() })
+              .optional(),
+            // The picture in motion, such as the card turning once around: `frames`
+            // pictures in `folder`, named 000.webp, 001.webp and so on, which
+            // scripts/import-sequence.mjs makes from a render. The page scrolls through
+            // them. The first one is the picture until then, in place of `image`.
+            sequence: z
+              .object({ folder: z.string(), frames: z.number().int().min(2) })
               .optional(),
             features: z
               .array(
@@ -124,7 +159,8 @@ const suites = defineCollection({
       items: z.array(
         z.object({
           label: z.string().optional(),
-          size: z.enum(["square", "tall"]),
+          // A `full` card is a column to itself, as tall as the columns beside it.
+          size: z.enum(["square", "tall", "full"]),
           image: z.string().optional(),
           imageAlt: z.string(),
         }),

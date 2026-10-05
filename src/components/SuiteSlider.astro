@@ -161,39 +161,39 @@ const hasNext = slides.length > 1;
 </div>
 
 <script>
-  // Which way the pictures and text travel when moving to the next slide:
-  // -1 is right to left, 1 is left to right.
-  const DIRECTION: number = -1;
+  import gsap from "gsap";
 
-  const DURATION = 900;
-  const EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
+  const DURATION = 0.9;
+  const EASE = "power3.inOut";
 
-  // On phones the pictures follow the finger, so only the text needs moving.
-  const TEXT_DURATION = 450;
+  const TEXT_DURATION = 0.45;
   const TEXT_TRAVEL = 24;
 
-  type Motion = { enter: Keyframe[]; leave: Keyframe[] };
-
-  // Everything travels the full width of its own frame, which clips it.
-  const slide: Motion = {
-    enter: [{ transform: `translateX(${-100 * DIRECTION}%)` }, { transform: "translateX(0)" }],
-    leave: [{ transform: "translateX(0)" }, { transform: `translateX(${100 * DIRECTION}%)` }],
-  };
-
-  const swap = async (leaving: HTMLElement, entering: HTMLElement, motion: Motion) => {
+  // Both pictures and text slide right→left on "next". With non-active slides pre-staged
+  // at xPercent:100 (see stage() below), the entering slide is already pinned off-screen
+  // right when its data-active is set — so the first paint is correct, no snap-back.
+  const swap = (leaving: HTMLElement, entering: HTMLElement): Promise<void> => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const duration = reduced ? 0 : DURATION;
 
+    gsap.killTweensOf([entering, leaving]);
     entering.toggleAttribute("data-active", true);
-    entering.animate(motion.enter, { duration, easing: EASING });
-    const exit = leaving.animate(motion.leave, { duration, easing: EASING });
 
-    // `finished` stalls while the browser isn't painting, so a timer backs it up.
-    await Promise.race([
-      exit.finished,
-      new Promise((resolve) => setTimeout(resolve, duration + 50)),
-    ]);
-    leaving.removeAttribute("data-active");
+    return new Promise((resolve) => {
+      gsap.to(entering, { xPercent: 0, duration, ease: EASE, overwrite: "auto" });
+      gsap.to(leaving, {
+        xPercent: -100,
+        duration,
+        ease: EASE,
+        overwrite: "auto",
+        onComplete: () => {
+          leaving.removeAttribute("data-active");
+          // Re-stage the leaving slide off-screen right so it enters cleanly next cycle.
+          gsap.set(leaving, { xPercent: 100 });
+          resolve();
+        },
+      });
+    });
   };
 
   document.querySelectorAll<HTMLElement>("[data-slider]").forEach((slider) => {
@@ -211,6 +211,26 @@ const hasNext = slides.length > 1;
 
     let active = 0;
     let sliding = false;
+
+    // Pre-stage every non-active slide at xPercent:100 on wide screens so the first
+    // paint after data-active is toggled lands at the correct position (no snap/flash
+    // on wrap-around). On narrow screens the images are a horizontally scrolled row and
+    // the texts are stacked in a grid — any xPercent transform would push them around,
+    // so clear everything back to the CSS default.
+    const stage = () => {
+      [images, previews, texts].forEach((group) => {
+        group.forEach((el) => {
+          if (!wide.matches) {
+            gsap.set(el, { clearProps: "transform" });
+            return;
+          }
+          const isActive = el.hasAttribute("data-active");
+          gsap.set(el, { xPercent: isActive ? 0 : 100 });
+        });
+      });
+    };
+    stage();
+    wide.addEventListener("change", stage);
 
     // Everything that names the slide in view, apart from what is animated.
     const mark = (index: number) => {
@@ -236,9 +256,9 @@ const hasNext = slides.length > 1;
 
       // The small frame always shows the picture that comes after the big one.
       await Promise.all([
-        swap(images[previous], images[active], slide),
-        swap(previews[after(previous)], previews[after(active)], slide),
-        swap(texts[previous], texts[active], slide),
+        swap(images[previous], images[active]),
+        swap(previews[after(previous)], previews[after(active)]),
+        swap(texts[previous], texts[active]),
       ]);
       sliding = false;
     });
@@ -262,16 +282,14 @@ const hasNext = slides.length > 1;
         previews.forEach((image, i) => image.toggleAttribute("data-active", i === after(index)));
 
         texts.forEach((text, i) => {
-          text.getAnimations().forEach((animation) => animation.cancel());
+          gsap.killTweensOf(text);
           text.toggleAttribute("data-active", i === index);
         });
         if (reduced.matches) return;
-        texts[index].animate(
-          [
-            { opacity: 0, transform: `translateX(${from * TEXT_TRAVEL}px)` },
-            { opacity: 1, transform: "translateX(0)" },
-          ],
-          { duration: TEXT_DURATION, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+        gsap.fromTo(
+          texts[index],
+          { opacity: 0, x: from * TEXT_TRAVEL },
+          { opacity: 1, x: 0, duration: TEXT_DURATION, ease: "power2.out" },
         );
       },
       { passive: true },

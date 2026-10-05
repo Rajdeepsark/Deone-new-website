@@ -4,6 +4,7 @@ import Nav from "./Nav.astro";
 interface Props {
   eyebrow?: string;
   name: string;
+  body?: string;
   imageSrc: string;
   imageAlt: string;
   /** Which part of the picture phones keep in view, as a CSS background-position. */
@@ -15,6 +16,7 @@ interface Props {
 const {
   eyebrow = "Suite",
   name,
+  body,
   imageSrc,
   imageAlt,
   imagePosition = "29.6% center",
@@ -38,17 +40,23 @@ const {
   >
     <!-- Image area starts below the nav bar (72px mobile / 96px desktop), rounded top-right corner preserved -->
     <div
-      class="absolute inset-x-0 top-[72px] md:top-24 bottom-0 overflow-hidden rounded-tr-[32px] md:rounded-tr-[60px]"
+      class="absolute inset-x-0 top-[88px] md:top-24 bottom-0 overflow-hidden rounded-tr-[32px] md:rounded-tr-[60px]"
     >
       <div
         data-suite-hero-bg
         aria-hidden="true"
-        class="absolute inset-x-0 top-0 h-[calc(100%+50svh)] bg-cover bg-no-repeat [background-position:var(--focus)] md:bg-center will-change-transform brightness-[1.19] md:brightness-100"
+        class="absolute inset-x-0 top-0 h-[calc(100%+80svh)] md:h-[calc(100%+50svh)] bg-cover bg-no-repeat [background-position:var(--focus)] md:bg-center will-change-transform brightness-[1.19] md:brightness-100"
         style={`background-image: url('${imageSrc}'); --focus: ${imagePosition};`}
       >
       </div>
       <!-- Stays put while the picture moves behind it. -->
       {overlay && <div aria-hidden="true" class="absolute inset-0" style={`background: ${overlay};`}></div>}
+      <!-- Scrim: fades in as the body sentence reveals so caps text stays legible -->
+      <div
+        data-suite-hero-scrim
+        aria-hidden="true"
+        class="absolute inset-0 bg-black opacity-0 transition-opacity duration-200 ease-out"
+      ></div>
     </div>
 
     <img
@@ -62,9 +70,10 @@ const {
     <!-- Nav rides on top of the whole hero -->
     <Nav variant="light" />
 
-    <!-- Text overlay: same positioning as the original SuiteHero -->
+    <!-- Title block: fades out as the user scrolls through the parallax zone -->
     <div
-      class="absolute inset-x-0 top-[calc(6rem_+_40.8svh)] -translate-y-1/2 px-6 text-center md:top-[48svh]"
+      data-suite-hero-title
+      class="absolute inset-x-0 top-[calc(6rem_+_40.8svh)] -translate-y-1/2 px-6 text-center md:top-[48svh] transition-opacity duration-200 ease-out"
     >
       <p
         class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em] text-brand-cream"
@@ -78,14 +87,31 @@ const {
         {name}
       </h1>
     </div>
+
+    {body && (
+      <!-- Body sentence: fades in near the bottom as the title fades out -->
+      <p
+        data-suite-hero-body
+        class="pointer-events-none absolute inset-x-0 bottom-[17svh] md:bottom-[14svh] px-4 mx-auto max-w-none md:max-w-[600px] text-center font-sans text-[13px] md:text-[18px] font-normal uppercase leading-[1.5] tracking-[0.06em] md:tracking-[0.08em] text-brand-cream opacity-0 transition-opacity duration-200 ease-out"
+      >
+        {body.split("\n").map((line) => (
+          <span class="block">{line}</span>
+        ))}
+      </p>
+    )}
   </div>
 </section>
 
 <script>
   const container = document.querySelector<HTMLElement>("[data-suite-hero-container]");
   const bg = document.querySelector<HTMLElement>("[data-suite-hero-bg]");
+  const titleEl = document.querySelector<HTMLElement>("[data-suite-hero-title]");
+  const bodyEl = document.querySelector<HTMLElement>("[data-suite-hero-body]");
+  const scrimEl = document.querySelector<HTMLElement>("[data-suite-hero-scrim]");
+
   if (container && bg) {
     let raf = 0;
+    const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
     const update = () => {
       raf = 0;
       const rect = container.getBoundingClientRect();
@@ -93,8 +119,25 @@ const {
       if (scrollable <= 0) return;
       const scrolled = Math.max(0, Math.min(scrollable, -rect.top));
       const progress = scrolled / scrollable;
+
+      // Parallax background
       const translate = progress * (window.innerHeight * 0.5);
       bg.style.transform = `translate3d(0, -${translate}px, 0)`;
+
+      // Title fades out over the first half; body fades in over the second half.
+      if (titleEl) {
+        const titleOpacity = clamp(1 - progress / 0.5, 0, 1);
+        titleEl.style.opacity = String(titleOpacity);
+      }
+      if (bodyEl) {
+        const bodyOpacity = clamp((progress - 0.5) / 0.4, 0, 1);
+        bodyEl.style.opacity = String(bodyOpacity);
+      }
+      if (scrimEl) {
+        // Peak ~0.22 opacity when the body is fully revealed — enough to lift caps text.
+        const scrimOpacity = clamp((progress - 0.5) / 0.4, 0, 1) * 0.22;
+        scrimEl.style.opacity = String(scrimOpacity);
+      }
     };
     const onScroll = () => {
       if (raf) return;

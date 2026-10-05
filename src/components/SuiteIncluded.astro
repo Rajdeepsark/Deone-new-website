@@ -1,14 +1,14 @@
 ---
 interface Card {
   label?: string;
-  size: "square" | "tall";
+  size: "square" | "tall" | "full";
   image?: string;
   imageAlt: string;
 }
 
 interface PhoneCard {
   card: number;
-  size: "short" | "tall";
+  size: "short" | "tall" | "full";
   label?: string;
 }
 
@@ -22,9 +22,17 @@ interface Props {
 
 const { eyebrow, headline, subtext, items, phone } = Astro.props;
 
-// Cards are listed column by column, so equal slices give the three columns.
+// Cards are listed column by column, so equal slices give the three columns. A `full`
+// card is a column to itself instead, and so are the cards before it and those after it.
 const perColumn = Math.ceil(items.length / 3);
-const columns = [0, 1, 2].map((i) => items.slice(i * perColumn, (i + 1) * perColumn));
+const columns = items.some((item) => item.size === "full")
+  ? items.reduce<Card[][]>((all, item, i) => {
+      const starts = i === 0 || item.size === "full" || items[i - 1].size === "full";
+      if (starts) all.push([]);
+      all[all.length - 1].push(item);
+      return all;
+    }, [])
+  : [0, 1, 2].map((i) => items.slice(i * perColumn, (i + 1) * perColumn));
 
 // The rounded corners mirror around the middle column. The exported pictures have
 // the same corners cut into them, so each card keeps its corners at every width.
@@ -81,7 +89,11 @@ const phoneCorners = ["rounded-tr-[24px]", "rounded-tl-[24px]"];
           <li
             class:list={[
               "relative isolate overflow-hidden bg-brand-ink",
-              card.size === "tall" ? "aspect-[177/264]" : "aspect-[177/224]",
+              card.size === "full"
+                ? "flex-1"
+                : card.size === "tall"
+                  ? "aspect-[177/264]"
+                  : "aspect-[177/224]",
               phoneCorners[column],
             ]}
           >
@@ -117,7 +129,11 @@ const phoneCorners = ["rounded-tr-[24px]", "rounded-tl-[24px]"];
           <li
             class:list={[
               "relative isolate overflow-hidden bg-brand-ink",
-              card.size === "tall" ? "aspect-[328/431]" : "aspect-square",
+              card.size === "full"
+                ? "flex-1"
+                : card.size === "tall"
+                  ? "aspect-[328/431]"
+                  : "aspect-square",
               corners[column],
             ]}
           >
@@ -137,7 +153,7 @@ const phoneCorners = ["rounded-tr-[24px]", "rounded-tl-[24px]"];
               <p
                 class:list={[
                   "absolute inset-x-0 bottom-0 bg-gradient-to-b from-transparent px-6 pb-6 pt-8 font-sans text-[16px] font-medium leading-[1.7] tracking-[0.01em] text-brand-sand",
-                  card.size === "tall" ? "to-black/30" : "to-black/40",
+                  card.size === "square" ? "to-black/40" : "to-black/30",
                 ]}
               >
                 {card.label.split("\n").map((line) => (

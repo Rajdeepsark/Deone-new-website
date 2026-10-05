@@ -9,6 +9,7 @@ import SuiteSecurity from "../../components/SuiteSecurity.astro";
 import SuiteIncluded from "../../components/SuiteIncluded.astro";
 import SuiteDetails from "../../components/SuiteDetails.astro";
 import SuiteNext from "../../components/SuiteNext.astro";
+import Footer from "../../components/Footer.astro";
 import Menu from "../../components/Menu.astro";
 
 export async function getStaticPaths() {
@@ -47,6 +48,20 @@ for (const key of sections) {
 const includedPhone = theme.included?.backgroundPhone ?? theme.included?.background;
 if (includedPhone) cssVariables.push(`--suite-included-bg-phone: ${includedPhone}`);
 if (theme.accent) cssVariables.push(`--color-suite-accent: ${theme.accent}`);
+// The security section's tab, box line and icons follow the accent unless the suite sets them.
+const tab = theme.security?.tab ?? theme.accent;
+const boxLine =
+  theme.security?.boxLine ??
+  (theme.accent && `color-mix(in oklab, ${theme.accent} 40%, transparent)`);
+if (tab) cssVariables.push(`--color-suite-tab: ${tab}`);
+if (boxLine) cssVariables.push(`--color-suite-box-line: ${boxLine}`);
+if (theme.security?.box) cssVariables.push(`--color-suite-box: ${theme.security.box}`);
+const icon =
+  theme.security?.icon ??
+  (theme.accent && `linear-gradient(174.31deg, ${theme.accent} 39.64%, #f3e4da 208.39%)`);
+if (icon) cssVariables.push(`--suite-icon-bg: ${icon}`);
+if (theme.security?.iconInk)
+  cssVariables.push(`--color-suite-icon-ink: ${theme.security.iconInk}`);
 if (theme.night) cssVariables.push(`--color-suite-night: ${theme.night}`);
 const bodyStyle = cssVariables.join("; ");
 ---
@@ -55,6 +70,7 @@ const bodyStyle = cssVariables.join("; ");
   <SuiteHero
     eyebrow={hero.eyebrow}
     name={name}
+    body={hero.body}
     imageSrc={hero.image}
     imageAlt={hero.imageAlt}
     imagePosition={hero.imagePosition}
@@ -69,9 +85,15 @@ const bodyStyle = cssVariables.join("; ");
   <SuiteBenefits
     eyebrow={benefits.eyebrow}
     headline={benefits.headline}
+    lastCorner={benefits.lastCorner}
     items={benefits.items}
   />
-  <SuiteQuote text={quote.text} image={quote.image} imageAlt={quote.imageAlt} />
+  <SuiteQuote
+    text={quote.text}
+    image={quote.image}
+    imageAlt={quote.imageAlt}
+    imagePosition={quote.imagePosition}
+  />
   <SuiteSecurity
     eyebrow={security.eyebrow}
     headline={security.headline}
@@ -98,12 +120,14 @@ const bodyStyle = cssVariables.join("; ");
     />
   )}
 
+  <Footer />
+
   <!-- Fixed floating menu toggle — same markup as the homepage Hero uses -->
   <button
     type="button"
     data-menu-toggle
     aria-label="Open menu"
-    class="group fixed left-1/2 top-[92svh] z-40 flex h-11 w-[130px] md:w-[190px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-[6px] rounded-lg bg-overlay-dark/80 backdrop-blur-sm text-brand-cream transition hover:bg-overlay-dark/95"
+    class="group fixed left-1/2 top-[92svh] z-40 flex h-11 w-[130px] md:w-[190px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-[6px] rounded-lg bg-overlay-dark/80 backdrop-blur-sm text-brand-cream cursor-pointer transition hover:bg-overlay-dark/95"
   >
     <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>
     <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>

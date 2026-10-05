@@ -5,6 +5,9 @@ name: Prestige
 
 hero:
   eyebrow: Suite
+  body: |-
+    For lives shaped by movement, ambition
+    and possibility.
   image: /suites/prestige-hero.jpg
   imageAlt: Executive on a phone call at his desk in a high-rise office overlooking the Manhattan skyline at dusk
 
@@ -34,15 +37,13 @@ pictures:
       image: /suites/prestige-in-transit.jpg
       imageAlt: Sun loungers and parasols beside a palm-lined reflecting pool at dusk
 
-    # PLACEHOLDER TEXT: the design only shows the wording for slide I.
-    # Replace the titles and descriptions below with the real ones.
-    - title: Title to come
-      description: Description to come.
+    - title: Arrival
+      description: Find space to reset and return to what matters.
       image: /suites/prestige-sauna.jpg
       imageAlt: Woman wrapped in a towel looking out of the window of a timber sauna
 
-    - title: Title to come
-      description: Description to come.
+    - title: Beyond the Journey
+      description: Considered stays, wellness and experiences for the time that is yours.
       image: /suites/prestige-yacht.jpg
       imageAlt: Catamaran under sail off a rocky headland, seen from above
 
@@ -52,8 +53,8 @@ benefits:
     A higher standard,
     wherever life leads
 
-  # `href` is where "Learn more" goes; it defaults to "#" until the real pages exist.
-  # Phones don't show "Learn more", as in the phone design.
+  # "Learn more" shows only under an item with an `href`, the page it goes to. No item
+  # has one yet, so the link is hidden. Phones never show it, as in the phone design.
   # Line breaks in a description are kept on phones and wide screens, to match the designs.
   items:
     - title: Banking
@@ -90,6 +91,8 @@ security:
   subtext: A more considered way to spend, with lasting protection for what you hold.
 
   # One tab per product. Each has a picture and a list of features.
+  # A tab can have its own `headline` and `subtext`, shown above the tabs while it is
+  # chosen.
   # On wide screens the section scrolls through the features of the tab in view, one by
   # one. Tabs change only when chosen.
   # `icon` is any name from src/icons.ts, e.g. shield, plane, percent, wallet, card, lock.
@@ -110,10 +113,9 @@ security:
         - icon: plane
           title: More room to act
           description: Higher spending limits and worldwide acceptance, for plans that reach beyond borders.
-        # PLACEHOLDER TEXT: this box is cut off in the design.
         - icon: percent
-          title: Title to come
-          description: Description to come.
+          title: Purchase Protection
+          description: Added reassurance for the things you choose to bring into your life.
 
     - label: The Vault
       # PICTURE PENDING: add `image: /suites/<file>` once the Vault render
