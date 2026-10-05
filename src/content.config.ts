@@ -188,7 +188,12 @@ const suites = defineCollection({
         href: z.string().default("#"),
         image: z.string().optional(),
         imageAlt: z.string().default(""),
-        // The wall colour phones fade the picture into at the top.
+        // Given this, phones show the picture at full height, as the phone design does,
+        // with this part of its width in view (a CSS object-position). Without it the
+        // picture sits in the lower part of the banner and fades into `color` at the top.
+        imagePosition: z.string().optional(),
+        // The wall colour phones fade the picture into at the top. With `imagePosition`
+        // it only shows until the picture has loaded.
         color: hex.default("#3a2d22"),
       })
       .optional(),

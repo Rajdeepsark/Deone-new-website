@@ -6,6 +6,11 @@ interface Props {
   href?: string;
   image?: string;
   imageAlt?: string;
+  /**
+   * Which part of the picture narrow screens keep in view, as a CSS object-position.
+   * With it they show the picture at full height; without it, faded into `color`.
+   */
+  imagePosition?: string;
   /** The wall colour narrow screens fade the picture into at the top. */
   color?: string;
 }
@@ -17,14 +22,17 @@ const {
   href = "#",
   image,
   imageAlt = "",
+  imagePosition,
   color = "#3a2d22",
 } = Astro.props;
 ---
 
 <!--
   The words sit in the middle at every width. Wide screens show the whole picture, as
-  designed. Narrower screens can't, so there the picture sits in the lower part and fades
-  at the top into `color`, the colour of its wall, which keeps the people clear of the words.
+  designed. Narrower screens can't. Given an `imagePosition` they show the picture at full
+  height, as the phone design does, with that part of its width in view. Without one the
+  picture sits in the lower part and fades at the top into `color`, the colour of its
+  wall, which keeps the people clear of the words.
 -->
 <section
   class="relative isolate flex aspect-[10/13] min-h-[440px] w-full items-center justify-center overflow-hidden bg-(--wall) px-6 text-brand-cream sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[1512/450] lg:min-h-[360px] lg:bg-suite-night"
@@ -34,7 +42,13 @@ const {
     <img
       src={image}
       alt={imageAlt}
-      class="absolute inset-x-0 bottom-0 -z-10 h-[62%] w-full object-cover object-[80%_center] [mask-image:linear-gradient(to_bottom,transparent,#000_40%)] sm:object-[88%_center] lg:top-0 lg:h-full lg:object-center lg:[mask-image:none]"
+      class:list={[
+        "absolute -z-10 w-full object-cover lg:inset-0 lg:h-full lg:object-center",
+        imagePosition
+          ? "inset-0 h-full [object-position:var(--focus)]"
+          : "inset-x-0 bottom-0 h-[62%] object-[80%_center] [mask-image:linear-gradient(to_bottom,transparent,#000_40%)] sm:object-[88%_center] lg:[mask-image:none]",
+      ]}
+      style={imagePosition ? `--focus: ${imagePosition}` : undefined}
       loading="lazy"
       decoding="async"
     />
@@ -47,8 +61,9 @@ const {
       {eyebrow}
     </p>
 
+    <!-- Phones: the phone design's 30px name, 24px from the lines above and below it. -->
     <h2
-      class="mt-3 font-sans text-[clamp(32px,10.5vw,40px)] leading-[1.1] font-light uppercase tracking-[0.05em] md:text-[52px] md:tracking-[0.02em] xl:text-[64px]"
+      class="mt-6 font-sans text-[30px] leading-[37px] font-light uppercase tracking-[0.05em] md:mt-3 md:text-[52px] md:leading-[1.1] md:tracking-[0.02em] xl:text-[64px]"
     >
       {name}
     </h2>
@@ -56,7 +71,7 @@ const {
     <!-- The link covers the whole banner, so all of it can be pressed. -->
     <a
       href={href}
-      class="mt-5 border-b border-brand-cream/40 pb-1 font-sans text-[12px] font-medium uppercase leading-[15px] tracking-[0.13em] outline-none transition after:absolute after:inset-0 hover:border-brand-cream focus-visible:border-brand-cream"
+      class="mt-6 md:mt-5 border-b border-brand-cream/40 pb-1 font-sans text-[12px] font-medium uppercase leading-[15px] tracking-[0.13em] outline-none transition after:absolute after:inset-0 hover:border-brand-cream focus-visible:border-brand-cream"
     >
       {ctaLabel}
       <span class="sr-only"> the {name} suite</span>

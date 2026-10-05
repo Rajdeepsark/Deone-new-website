@@ -250,12 +250,15 @@ details:
         - Rewards Hub
 
 # The banner that closes the page and leads on to another suite.
-# `href` is where it goes. `color` is the wall colour phones fade the picture into at
-# the top, so it should match the top of the picture.
+# `href` is where it goes. With `imagePosition`, phones show the picture at full height, as
+# the phone design does, keeping that part of its width in view; `color` then only shows
+# behind the picture until it has loaded.
 next:
   eyebrow: Suite
   name: Prestige
   href: /suites/prestige
   color: "#524033"
   image: /suites/prestige-hero.jpg
+  # Matched to the phone design: the man at his desk on the left, the towers on the right.
+  imagePosition: 30% center
   imageAlt: Executive on a phone call at his desk in a high-rise office overlooking the Manhattan skyline at dusk
