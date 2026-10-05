@@ -1,6 +1,7 @@
-# PLACEHOLDER CONTENT: for now this page reuses the Prestige copy and pictures. Only the
-# name, the hero picture, the colours below and the closing banner differ. Replace the
-# copy and pictures with the Executive ones as they arrive.
+# Most of this page now carries the Executive design's own copy and pictures. What is
+# still borrowed from Prestige or standing in is marked PLACEHOLDER, STAND-IN or
+# PROVISIONAL below: the hero sentence, the Executive Card tab's heading and the bracelet
+# picture. The Full benefits list is also still the Prestige one.
 name: Executive
 
 # The page's colours, section by section, as the design file gives them. `background`
@@ -8,7 +9,7 @@ name: Executive
 # any value with a # in it, or YAML reads the rest of the line as a comment.
 # Sections left out keep the Prestige look, whose values are in src/styles/global.css.
 theme:
-  # "Where ambition takes you"
+  # "Time is your greatest asset"
   pictures:
     background: "linear-gradient(180deg, #939595 0%, #454947 100%)"
     ink: "#FCFAF7"
@@ -16,11 +17,17 @@ theme:
   benefits:
     background: "linear-gradient(0deg, #454947, #454947), linear-gradient(180deg, #939595 0%, #E4E5E5 100%), linear-gradient(180deg, #9FC4C8 0%, #E7F0F1 100%)"
     ink: "#FCFAF7"
-  # "Security" (the design calls it "Products")
+  # "Products"
   security:
     background: "linear-gradient(180deg, #454947 0%, #939595 100%), linear-gradient(180deg, #454947 -141.07%, #FCFAF7 100%)"
     ink: "#FCFAF7"
-  # Active tab, feature icons and the slider marker: the DeOne green.
+    # The tab in view is graphite, not the accent.
+    tab: "#454947"
+    # The feature boxes. The line around the one in focus is the accent at 40%.
+    box: "#FCFAF7"
+    # The feature icons: graphite fading to grey, measured from the design.
+    icon: "linear-gradient(174.31deg, #454947 0%, #B4B6B5 100%)"
+  # The slider marker and the line around the box in focus: the DeOne green.
   accent: "#0F6B76"
   # "What's included"
   included:
@@ -34,48 +41,53 @@ theme:
 
 hero:
   eyebrow: Suite
+  # PLACEHOLDER TEXT: the Prestige sentence, until this suite's own arrives. It fades in
+  # over the picture as the page scrolls through the hero.
+  body: |-
+    For lives shaped by movement, ambition
+    and possibility.
   image: /suites/executive-hero.jpg
   imageAlt: Family talking on a sofa on a terrace at dusk
   # The family sits on the right of the picture, so that is where phones look.
   imagePosition: 80% center
 
 pictures:
+  # The line breaks are the design's. Phones let the subtext wrap by itself.
   headline: |-
-    Where
-    ambition
-    takes
-    you
+    Time is
+    your
+    greatest
+    asset
   subtext: |-
-    The world may change around you.
-    Your standards need not.
+    More time for what matters, with
+    protection that extends to those
+    closest to you.
 
   # Four pictures floating around the headline, in this order:
   # small top-left (blurred), top-right, large bottom-left, small right (blurred)
   gallery:
-    - image: /suites/prestige-dune-detail.jpg
-    - image: /suites/prestige-dune.jpg
-      alt: A lone figure walking the ridge of a desert dune
-    - image: /suites/prestige-coast.jpg
-      alt: Yachts anchored in a sheltered cove beneath pale cliffs
-    - image: /suites/prestige-cliffs.jpg
+    - image: /suites/executive-yoga.jpg
+    - image: /suites/executive-desert-camp.jpg
+      alt: Lounge seating under a canopy at a desert camp, dunes rising behind
+    - image: /suites/executive-coast-road.jpg
+      alt: Classic coupé on a coastal road above the sea
+    - image: /suites/executive-yacht.jpg
 
   slides:
-    - title: In Transit
-      description: Room to focus, pause or take in the view.
-      image: /suites/prestige-in-transit.jpg
-      imageAlt: Sun loungers and parasols beside a palm-lined reflecting pool at dusk
+    - title: Time, returned to you
+      description: A dedicated concierge takes care of the details, leaving more time for what matters most.
+      image: /suites/executive-safari.jpg
+      imageAlt: Couple standing in savannah grass at golden hour as a waiter in white gloves brings champagne on a tray
 
-    # PLACEHOLDER TEXT: the design only shows the wording for slide I.
-    # Replace the titles and descriptions below with the real ones.
-    - title: Title to come
-      description: Description to come.
-      image: /suites/prestige-sauna.jpg
-      imageAlt: Woman wrapped in a towel looking out of the window of a timber sauna
+    - title: What you have built
+      description: A higher level of protection for your wealth, with care extending to those closest to you.
+      image: /suites/executive-driveway.jpg
+      imageAlt: Boy with a school backpack running ahead of his parents across the forecourt of a modern house at sunset
 
-    - title: Title to come
-      description: Description to come.
-      image: /suites/prestige-yacht.jpg
-      imageAlt: Catamaran under sail off a rocky headland, seen from above
+    - title: A legacy in motion
+      description: The success you create today can shape the future you leave behind.
+      image: /suites/executive-infinity-pool.jpg
+      imageAlt: Figure in a white robe beside a curved infinity pool above a wooded bay, a small boat on the water below
 
 benefits:
   eyebrow: Private DeoBanking
@@ -83,76 +95,92 @@ benefits:
     A higher standard,
     wherever life leads
 
-  # `href` is where "Learn more" goes; it defaults to "#" until the real pages exist.
-  # Phones don't show "Learn more", as in the phone design.
+  # "Learn more" shows only under an item with an `href`, the page it goes to. No item
+  # has one yet, so the link is hidden. Phones never show it, as in the phone design.
   # Line breaks in a description are kept on phones and wide screens, to match the designs.
   items:
     - title: Banking
       description: |-
-        One Onchain Balance, moving across
-        currencies with the ease your life calls for.
-      image: /suites/prestige-banking.jpg
-      imageAlt: City skyline across the water at sunset
+        The fullest expression of Deone banking,
+        with reach to match your ambitions.
+      image: /suites/executive-banking.jpg
+      imageAlt: Man with a glass of champagne looking out over a city skyline at night
 
     - title: Wellness
       description: |-
-        Time to restore, refocus and feel at your
-        best, wherever you find yourself.
-      image: /suites/prestige-wellness.jpg
-      imageAlt: Woman reclining with her eyes closed in dappled light
+        Tools and experiences to restore your
+        energy and sustain your wellbeing.
+      image: /suites/executive-wellness.jpg
+      imageAlt: Woman in a robe and eye mask reclining on a lounger before a window onto snowy mountains
 
     - title: Rewards
       description: |-
-        Rewards for the life you lead, with value that
-        grows alongside you.
-      image: /suites/prestige-rewards.jpg
-      imageAlt: Woman looking at a necklace in a jeweller's window
+        A richer return, contributing to the wealth
+        and wellbeing you continue to shape.
+      image: /suites/executive-rewards.jpg
+      imageAlt: Woman in a white gown and a diamond necklace in a wood-panelled jeweller's
 
 quote:
+  # The line breaks are the design's; wide screens keep them, phones wrap freely.
   text: |-
-    As your world expands, so does
-    what you have to protect.
-  image: /suites/prestige-quote.jpg
-  imageAlt: Man in a linen suit watching a street race from a balcony above the harbour at sunset
+    Success is not only what you
+    achieve. It is the freedom to enjoy it
+    and the ability to share what it
+    makes possible.
+  # The export already has the design's darkening in it.
+  image: /suites/executive-quote.jpg
+  imageAlt: Man smiling over a leather-bound book in a private jet, a curly-haired child and a woman across the table
 
 security:
-  eyebrow: Security
+  eyebrow: Products
+  # The heading for a tab without one of its own. PLACEHOLDER TEXT for the Executive Card
+  # tab: the design frames seen so far show The Vault's and the Payment Bracelet's
+  # headings, not the card's, so this is still the Prestige wording.
   headline: For what you’re building
   subtext: A more considered way to spend, with lasting protection for what you hold.
 
   # One tab per product. Each has a picture and a list of features.
+  # A tab can have its own `headline` and `subtext`, shown above the tabs while it is
+  # chosen.
   # On wide screens the section scrolls through the features of the tab in view, one by
   # one. Tabs change only when chosen.
-  # `icon` is any name from src/icons.ts, e.g. shield, plane, percent, wallet, card, lock.
+  # `icon` is any name from src/icons.ts, e.g. shield, guard, tap, plane, percent, card, lock.
   # `imagePlacement` is where the picture sits in the 1512px design frame, in px.
   # A feature can have its own `image:`, shown while that feature is in focus. Without
   # one, the tab's picture is used and simply changes pose from feature to feature.
+  # A tab can have a `sequence:` instead, the picture in motion: a folder of frames named
+  # 000.webp, 001.webp and so on, which the page scrolls through.
   tabs:
     - label: Executive Card
-      # STAND-IN PICTURE: cut from the design screenshot, so it is soft.
-      # Replace with the real card render (transparent PNG, 2x).
-      image: /suites/prestige-security-card.png
-      imageAlt: Brushed metal DeOne Executive card standing on one corner
-      imagePlacement: { left: 811, top: 562, width: 687.56 }
+      # The card turning once around, from the DeOne_CardTurntable_Executive_v001 render.
+      # To bring in a newer render: node scripts/import-sequence.mjs <its folder> <this folder>
+      sequence: { folder: /suites/executive-card-turntable, frames: 150 }
+      # The still the tab goes back to if `sequence` is taken out.
+      image: /suites/executive-security-card.png
+      imageAlt: Black metal DeOne Executive card, tilted, floating above its shadow
+      # Measured from the design: the card's edges there, matched to this picture.
+      imagePlacement: { left: 722, top: 635, width: 879 }
       features:
-        - icon: shield
-          title: Security, kept close
-          description: Solid metal, with no printed numbers or markings. Your card details stay out of sight.
-        - icon: plane
-          title: More room to act
-          description: Higher spending limits and worldwide acceptance, for plans that reach beyond borders.
-        # PLACEHOLDER TEXT: this box is cut off in the design.
+        - icon: globe
+          title: Freedom at scale
+          description: Worldwide acceptance and elevated limits, for the full scope of your ambitions.
+        - icon: diamond
+          title: Craft at every touch
+          description: Ceramic-metal construction, shaped with precision and finished with a quiet, tactile weight.
+        # The design cuts this box off, so its icon is the one Prestige uses for it.
         - icon: percent
-          title: Title to come
-          description: Description to come.
+          title: Purchase protection
+          description: Added reassurance for the things you choose to bring into your life.
 
     - label: The Vault
-      # PICTURE PENDING: add `image: /suites/<file>` once the Vault render
-      # (transparent PNG, 2x) is in public/suites.
-      imageAlt: The Vault, a bronze metal card engraved with a shield of concentric lines
-      imagePlacement: { left: 764, top: 666, width: 780 }
+      headline: Assets for a lifetime
+      subtext: Long-term protection for what you have built.
+      image: /suites/executive-security-vault.png
+      imageAlt: The Vault, a brushed silver metal card engraved with a shield of concentric lines, floating above its shadow
+      # Measured from the design: the card's edges there, matched to this picture.
+      imagePlacement: { left: 754, top: 744, width: 804 }
       features:
-        - icon: wallet
+        - icon: guard
           title: Yours, always
           description: Your assets remain yours. Your Vault Key stays in your hands.
         - icon: card
@@ -163,20 +191,25 @@ security:
           description: No battery, ports or moving parts. A single tap brings your Vault within reach.
 
     - label: Payment Bracelet
-      # PICTURE PENDING: add `image: /suites/<file>` once the bracelet render
-      # (transparent PNG, 2x) is in public/suites.
-      imageAlt: The DeOne payment bracelet
-      # PLACEHOLDER TEXT: the design for this tab has not arrived yet.
+      headline: Payment Bracelet
+      subtext: Payment, wherever life takes you
+      # STAND-IN PICTURE: cut from the design screenshot, so it is soft, and it only suits
+      # a grey background like this page's. Replace with the real bracelet render
+      # (transparent PNG, 2x) and measure its placement again.
+      image: /suites/executive-security-bracelet.png
+      imageAlt: The DeOne payment bracelet, a black cord with silver clasps and a black plate lettered Deone, floating above its shadow
+      # Measured from the design.
+      imagePlacement: { left: 844, top: 903, width: 615 }
       features:
-        - icon: card
-          title: Title to come
-          description: Description to come.
-        - icon: globe
-          title: Title to come
-          description: Description to come.
-        - icon: lock
-          title: Title to come
-          description: Description to come.
+        - icon: tap
+          title: Always at hand
+          description: Power-free by design, ready to make a payment whenever you need it.
+        - icon: guard
+          title: Card-level protection
+          description: The same security standard as your Deone Card, carried on the wrist.
+        - icon: diamond
+          title: Finished for comfort
+          description: Made with materials used in fine timepieces, shaped to sit naturally on the wrist.
 
 included:
   eyebrow: What's included
@@ -187,65 +220,67 @@ included:
   # the next four the middle, the last four the right.
   # `size` is `square` (328 x 328) or `tall` (328 x 431).
   items:
-    # Left column
+    # Left column: the Executive pictures and labels, as the design shows them.
     - label: |-
         Onchain Banking
         Account
       size: square
-      image: /suites/prestige-included-onchain-banking.jpg
-      imageAlt: Man in a suit walking between dark glass towers
+      image: /suites/executive-included-onchain-banking.jpg
+      imageAlt: Manhattan skyline at dusk seen through a tall window
     - label: Executive Card
       size: square
-      image: /suites/prestige-included-prestige-card.jpg
-      imageAlt: Hands holding a brushed metal card
+      image: /suites/executive-included-executive-card.jpg
+      imageAlt: Black DeOne Executive card passed from one hand to another above a payment terminal
     - label: Shopping Rewards
       size: tall
-      image: /suites/prestige-included-shopping-rewards.jpg
-      imageAlt: Couple carrying shopping bags along a palm-lined promenade
+      image: /suites/executive-included-shopping-rewards.jpg
+      imageAlt: Man in a dark suit trying on a wristwatch at a jeweller's counter
+    # The design has the Vault here, where Prestige has Price and Purchase Protection.
+    - label: Deone Vault
+      size: tall
+      image: /suites/executive-included-vault.jpg
+      imageAlt: Man in a grey suit holding the Vault card in one hand and a phone showing its app in the other
+
+    # Middle column: the Executive pictures and labels, as the design shows them.
+    - label: Cloud Miner
+      size: tall
+      image: /suites/executive-included-cloud-miner.jpg
+      imageAlt: Man in a cream sweater working on a laptop in warm light
+    - label: Travel Accident Insurance
+      size: square
+      image: /suites/executive-included-travel-insurance.jpg
+      imageAlt: Three travellers walking towards jungle ruins as sunlight breaks through the trees
+    - label: |-
+        +1,700 Airport Lounges
+        Worldwide
+      size: tall
+      image: /suites/executive-included-airport-lounges.jpg
+      imageAlt: Man with a coffee in a leather armchair watching a jet through the lounge window
+    - label: Deone Bracelet
+      size: square
+      image: /suites/executive-included-payment-bracelet.jpg
+      imageAlt: Wrist wearing the payment bracelet held towards a payment terminal
+
+    # Right column: the Executive pictures and labels, as the design shows them.
+    - label: Rewards Hub
+      size: square
+      image: /suites/executive-included-rewards-hub.jpg
+      imageAlt: Glass tower seen from below, its upper floors breaking apart into floating cubes
+    - label: Wellness
+      size: square
+      image: /suites/executive-included-wellness.jpg
+      imageAlt: Woman in a robe resting with her eyes closed beside a window onto snowy mountains
+    - label: Better Life Rewards™
+      size: tall
+      image: /suites/executive-included-better-life-rewards.jpg
+      imageAlt: Hand holding a phone showing the Rewards Hub in the app
+    # Prestige has the Vault here; this page has it in the left column.
     - label: |-
         Price and Purchase
         Protection
       size: tall
-      image: /suites/prestige-included-purchase-protection.jpg
-      imageAlt: Woman holding a metal card at a marble counter
-
-    # Middle column
-    - label: Cloud Miner
-      size: tall
-      image: /suites/prestige-included-cloud-miner.jpg
-      imageAlt: Man working on a laptop at a low table
-    - label: Travel Accident Insurance
-      size: square
-      image: /suites/prestige-included-travel-insurance.jpg
-      imageAlt: Desert dunes at dusk
-    - label: |-
-        +1.700 Airport Lounges
-        Worldwide
-      size: tall
-      image: /suites/prestige-included-airport-lounges.jpg
-      imageAlt: Couple talking over a drink in an airport lounge
-    # This card's label ("Stablecoin Points Rewards System") is hidden in the design.
-    - size: square
-      image: /suites/prestige-included-stablecoin-rewards.jpg
-      imageAlt: Freediver above a coral reef
-
-    # Right column
-    - label: Rewards Hub
-      size: square
-      image: /suites/prestige-included-rewards-hub.jpg
-      imageAlt: Hand wearing a sculptural gold ring, resting on white fabric
-    - label: Wellness
-      size: square
-      image: /suites/prestige-included-wellness.jpg
-      imageAlt: Woman relaxing in a spa pool
-    - label: Better Life Rewards™
-      size: tall
-      image: /suites/prestige-included-better-life-rewards.jpg
-      imageAlt: Hands holding a phone showing the rewards app
-    - label: Cold Storage Vault
-      size: tall
-      image: /suites/prestige-included-cold-storage-vault.jpg
-      imageAlt: Man holding a metal card and a phone beside a vault device
+      image: /suites/executive-included-purchase-protection.jpg
+      imageAlt: Woman in black handing a card across a counter beside a payment terminal
 
   # Phones show eight of the cards, in two columns of four, top to bottom.
   # `card` is the card's place in the list above (1 to 12). `size` is its height there:
@@ -255,12 +290,12 @@ included:
       - { card: 1, size: short } # Onchain Banking Account
       - { card: 9, size: short } # Rewards Hub
       - { card: 3, size: tall } # Shopping Rewards
-      - { card: 4, size: tall } # Price and Purchase Protection
+      - { card: 4, size: tall } # Deone Vault
     right:
       - { card: 5, size: tall } # Cloud Miner
       - { card: 2, size: short, label: Metal Tokenized Card } # the Executive Card picture
       - { card: 10, size: short } # Wellness
-      - { card: 12, size: tall } # Cold Storage Vault
+      - { card: 12, size: tall } # Price and Purchase Protection
 
 details:
   headline: Full benefits
@@ -288,7 +323,7 @@ details:
     - title: Travel
       icon: travel
       items:
-        - +1.700 airport lounges worldwide
+        - +1,700 airport lounges worldwide
         - Travel accident insurance
         - Baggage delay
         - Lost luggage
@@ -303,15 +338,5 @@ details:
         - Rewards hub
         - Shopping rewards
 
-# The banner that closes the page and leads on to another suite.
-# `href` is where it goes. `color` is the wall colour phones fade the picture into at
-# the top, so it should match the top of the picture.
-next:
-  eyebrow: Suite
-  name: Deluxe
-  href: /suites/deluxe
-  # Matches the Full benefits section above, so the two run together on phones.
-  color: "#454947"
-  # STAND-IN PICTURE: the homepage's Deluxe picture with the design's 50% scrim baked in.
-  image: /suites/deluxe-preview.jpg
-  imageAlt: Man serving a tennis ball on a hillside court overlooking the sea at sunset
+# No closing banner on this page. To lead on to another suite, add a `next:` block like
+# the one at the end of prestige.yaml.
