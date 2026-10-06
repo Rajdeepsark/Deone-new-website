@@ -130,10 +130,16 @@ const year = new Date().getFullYear();
       ))}
     </ul>
 
-    <!-- MOBILE: copyright then globe icon -->
+    <!-- MOBILE: copyright, the legal link, then globe icon -->
     <p class="md:hidden mt-8 font-sans text-[12px] font-normal tracking-[0.02em] opacity-90 text-center">
       © {year} DeOne. All rights reserved.
     </p>
+    <a
+      href="/privacy-policy"
+      class="md:hidden mt-4 font-sans text-[12px] font-medium uppercase tracking-[0.13em] hover:opacity-80"
+    >
+      Privacy Policy
+    </a>
     <button
       type="button"
       class="md:hidden mt-6 flex h-9 w-9 items-center justify-center rounded-md border border-brand-cream/40 hover:bg-brand-cream/10"
@@ -149,9 +155,17 @@ const year = new Date().getFullYear();
 
     <!-- DESKTOP: Bottom bar with copyright / DEONE / EN pill -->
     <div class="hidden md:grid mt-[120px] lg:mt-[160px] grid-cols-3 w-full items-center gap-4">
-      <p class="font-sans text-[12px] font-normal tracking-[0.02em] opacity-90 justify-self-start">
-        © {year} DeOne. All rights reserved.
-      </p>
+      <div class="justify-self-start flex items-center gap-6">
+        <p class="font-sans text-[12px] font-normal tracking-[0.02em] opacity-90">
+          © {year} DeOne. All rights reserved.
+        </p>
+        <a
+          href="/privacy-policy"
+          class="font-sans text-[12px] font-medium uppercase tracking-[0.13em] hover:opacity-80"
+        >
+          Privacy Policy
+        </a>
+      </div>
 
       <div class="justify-self-center">
         <svg viewBox="0 0 153 28" class="h-8 w-auto" fill="currentColor" aria-hidden="true">

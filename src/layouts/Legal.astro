@@ -1,0 +1,197 @@
+---
+import Base from "./Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Menu from "../components/Menu.astro";
+
+interface Props {
+  title: string;
+  /** When the document was last changed, as it should read: 3 September 2026. */
+  updated: string;
+  description?: string;
+}
+
+const { title, updated, description } = Astro.props;
+---
+
+<!--
+  A page of words alone, for a legal document such as the privacy policy. It looks like
+  the homepage's "The world of DeOne" section: cream, with the pattern fading down from
+  the top, graphite words and teal headings, in the site's type sizes and spacing. The
+  document itself is Markdown, rendered into the slot; the styles below give its
+  headings, lists and table the site's look.
+-->
+<Base title={`DeOne | ${title}`} description={description}>
+  <main class="relative isolate bg-brand-cream text-brand-ink">
+    <!-- The pattern is drawn to fade out towards its foot, so it ends on its own. -->
+    <img
+      src="/intro-pattern.svg"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] w-full object-cover object-center md:h-[720px] lg:h-[900px]"
+      decoding="async"
+    />
+
+    <Nav variant="dark" />
+
+    <header class="mx-auto max-w-[680px] px-6 pt-40 text-center md:pt-[200px]">
+      <p class="font-serif text-[18px] leading-[22px] font-medium uppercase tracking-[0.08em]">
+        Legal
+      </p>
+
+      <h1
+        class="mt-4 font-sans text-[36px] leading-[1.15] font-normal uppercase tracking-[0.02em] text-brand-teal md:text-[42px]"
+      >
+        {title}
+      </h1>
+
+      <p class="mt-5 font-sans text-[16px] font-normal leading-[1.7] tracking-[0.01em] md:text-[18px]">
+        Last updated {updated}
+      </p>
+    </header>
+
+    <article class="legal mx-auto max-w-[680px] px-6 pb-24 pt-16 md:pb-[200px] md:pt-[120px]">
+      <slot />
+    </article>
+  </main>
+
+  <Footer />
+
+  <!-- Fixed floating menu toggle — same markup as the homepage Hero uses -->
+  <button
+    type="button"
+    data-menu-toggle
+    aria-label="Open menu"
+    class="group fixed left-1/2 top-[92svh] z-40 flex h-11 w-[130px] md:w-[190px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-[6px] rounded-lg bg-overlay-dark/80 backdrop-blur-sm text-brand-cream cursor-pointer transition hover:bg-overlay-dark/95"
+  >
+    <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>
+    <span class="block h-px w-[90px] bg-current transition-[width] duration-300 ease-out group-hover:w-[110px] md:group-hover:w-[140px]"></span>
+  </button>
+
+  <Menu />
+</Base>
+
+<style>
+  /* The document's words: the site's body text, as under the section headings. */
+  .legal {
+    --rule: var(--color-cta-border); /* the grey of the section's button outline */
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 27px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Section headings: teal, like the section's headline, at the size of the gallery's line
+     under its headline. */
+  .legal :global(h2) {
+    margin-top: 64px;
+    color: var(--color-brand-teal);
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .legal :global(h2 + *) {
+    margin-top: 32px;
+  }
+
+  .legal :global(p),
+  .legal :global(ul) {
+    margin-top: 24px;
+  }
+  .legal :global(strong) {
+    font-weight: 500;
+  }
+  .legal :global(a) {
+    border-bottom: 1px solid color-mix(in oklab, var(--color-brand-ink) 40%, transparent);
+    padding-bottom: 1px;
+    transition: color 300ms, border-color 300ms;
+  }
+  .legal :global(a:hover) {
+    color: var(--color-brand-teal);
+    border-color: var(--color-brand-teal);
+  }
+
+  .legal :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 24px;
+    list-style: disc;
+  }
+  .legal :global(li::marker) {
+    color: color-mix(in oklab, var(--color-brand-ink) 60%, transparent);
+  }
+
+  /* The table of purposes, data and lawful bases, ruled as in the document: a line
+     around every cell, in the feature boxes' small text. It is 600px wide at the least,
+     so on narrow screens it scrolls sideways inside its box. */
+  .legal :global(.table-scroll) {
+    margin-top: 24px;
+    overflow-x: auto;
+  }
+  .legal :global(table) {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.02em;
+  }
+  .legal :global(th),
+  .legal :global(td) {
+    padding: 16px;
+    vertical-align: top;
+    border: 1px solid var(--rule);
+  }
+  .legal :global(th) {
+    font-size: 12px;
+    line-height: 15px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    text-align: left;
+  }
+  .legal :global(thead th) {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    vertical-align: top; /* the headings start level, as in the document */
+  }
+  .legal :global(tbody th) {
+    width: 24px;
+    padding-top: 20px; /* so its small letter sits on the first line of the cells beside it */
+    text-transform: none; /* the rows' letters, a. to k., as the document has them */
+  }
+  .legal :global(td:nth-child(2)) {
+    width: 40%;
+  }
+  .legal :global(td:nth-child(3)) {
+    width: 24%;
+  }
+  .legal :global(td ol),
+  .legal :global(td ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding-left: 20px;
+  }
+  .legal :global(td ol) {
+    list-style: decimal;
+  }
+  .legal :global(td ul) {
+    margin-top: 8px;
+    padding-left: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .legal :global(h2) {
+      margin-top: 96px;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0.03em;
+    }
+  }
+</style>

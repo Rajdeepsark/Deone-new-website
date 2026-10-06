@@ -207,4 +207,17 @@ const suites = defineCollection({
   }),
 });
 
-export const collections = { suites };
+// The legal pages, such as the privacy policy: a Markdown file each, under
+// src/content/legal, shown by a page of the same name under src/pages.
+const legal = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/legal" }),
+  schema: z.object({
+    title: z.string(),
+    // The date it was last changed, as it should read on the page: 3 September 2026.
+    updated: z.string(),
+    // For search engines and link previews.
+    description: z.string().optional(),
+  }),
+});
+
+export const collections = { suites, legal };

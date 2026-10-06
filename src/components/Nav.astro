@@ -6,6 +6,11 @@ interface Props {
 const { variant = "light" } = Astro.props;
 
 const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
+// The frames around the buttons: cream over a picture, ink on a light background.
+const frameClass =
+  variant === "light"
+    ? "border-brand-cream/40 bg-overlay-mid/10 hover:border-brand-cream/70 hover:bg-overlay-mid/40"
+    : "border-brand-ink/30 bg-brand-ink/5 hover:border-brand-ink/60 hover:bg-brand-ink/10";
 ---
 
 <header
@@ -17,7 +22,10 @@ const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
 >
   <button
     type="button"
-    class="flex h-9 md:h-10 w-9 md:w-auto items-center justify-center md:justify-start md:gap-2 rounded-lg border border-brand-cream/40 bg-overlay-mid/10 backdrop-blur-sm md:px-3 justify-self-start text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300 hover:border-brand-cream/70 hover:bg-overlay-mid/40"
+    class:list={[
+      "flex h-9 md:h-10 w-9 md:w-auto items-center justify-center md:justify-start md:gap-2 rounded-lg border backdrop-blur-sm md:px-3 justify-self-start text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300",
+      frameClass,
+    ]}
     aria-label="Change language"
   >
     <!-- Globe icon on mobile -->
@@ -54,7 +62,10 @@ const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
     </svg>
   </a>
 
-  <nav class="justify-self-end flex h-9 md:h-10 w-9 md:w-auto items-center justify-center md:justify-start md:gap-4 rounded-lg border border-brand-cream/40 bg-overlay-mid/10 backdrop-blur-sm md:px-4 text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300 hover:border-brand-cream/70 hover:bg-overlay-mid/40">
+  <nav class:list={[
+      "justify-self-end flex h-9 md:h-10 w-9 md:w-auto items-center justify-center md:justify-start md:gap-4 rounded-lg border backdrop-blur-sm md:px-4 text-[12px] font-medium uppercase tracking-[0.13em] transition-colors duration-300",
+      frameClass,
+    ]}>
     <!-- Person icon on mobile (no link) -->
     <span class="md:hidden flex h-full w-full items-center justify-center" aria-label="Account">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
@@ -64,7 +75,7 @@ const textClass = variant === "light" ? "text-brand-cream" : "text-brand-ink";
     </span>
     <!-- Text links on desktop -->
     <a href="/login" class="hidden md:inline">Log in</a>
-    <span aria-hidden="true" class="hidden md:block h-4 w-px bg-brand-cream/40"></span>
+    <span aria-hidden="true" class="hidden md:block h-4 w-px bg-current opacity-40"></span>
     <a href="/signup" class="hidden md:inline">Sign up</a>
   </nav>
 </header>

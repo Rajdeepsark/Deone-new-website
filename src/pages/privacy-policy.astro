@@ -1,0 +1,13 @@
+---
+import { getEntry, render } from "astro:content";
+import Legal from "../layouts/Legal.astro";
+
+// The words are in src/content/legal/privacy-policy.md.
+const policy = await getEntry("legal", "privacy-policy");
+if (!policy) throw new Error("src/content/legal/privacy-policy.md is missing");
+const { Content } = await render(policy);
+---
+
+<Legal title={policy.data.title} updated={policy.data.updated} description={policy.data.description}>
+  <Content />
+</Legal>
